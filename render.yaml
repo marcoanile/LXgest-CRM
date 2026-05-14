@@ -1,0 +1,65 @@
+services:
+  - type: web
+    name: lxgest-crm
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: MASTER_EMAIL
+        value: marco.anile@lxgest.com
+      - key: MASTER_PASSWORD
+        value: Mec090716
+      - key: MASTER_NAME
+        value: Marco Anile
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_VERIFY_TOKEN
+        sync: false
+      - key: WHATSAPP_BUSINESS_NUMBER
+        value: "351913135420"
+      - key: WHATSAPP_DISPLAY_NUMBER
+        value: "+351 913135420"
+      - key: WHATSAPP_BOT_ENABLED
+        value: "true"
+      - key: APOLLO_API_KEY
+        sync: false
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false
+      - key: HUNTER_API_KEY
+        sync: false
+      - key: META_ACCESS_TOKEN
+        sync: false
+      - key: META_PAGE_ID
+        sync: false
+      - key: LINKEDIN_ACCESS_TOKEN
+        sync: false
+      - key: LINKEDIN_ORGANIZATION_URN
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lxgest-crm-db
+          property: connectionString
+
+databases:
+  - name: lxgest-crm-db
+    plan: starter

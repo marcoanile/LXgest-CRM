@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LXGest CRM Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange:#E8731A;--orange2:#F5932A;--orange-glow:rgba(232,115,26,0.15);
+  --g900:#141518;--g850:#1A1D21;--g800:#20242A;--g750:#272B32;--g700:#2E333B;
+  --g600:#3D4450;--g500:#546070;--g400:#7A8694;--g300:#A0ACBA;--g200:#C8D4E0;
+  --text1:#EDF0F5;--text2:#9BAABB;--text3:#5C6B7A;
+  --border:rgba(255,255,255,0.055);--border2:rgba(255,255,255,0.1);
+  --glass:rgba(255,255,255,0.025);--glass2:rgba(255,255,255,0.05);
+  --success:#2ECC71;--danger:#E74C3C;--info:#3498DB;--warn:#F39C12;--purple:#8B5CF6;
+  --r:14px;--rs:8px;--rl:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--g900);color:var(--text1);min-height:100vh;overflow-x:hidden;font-size:14px;}
+
+/* AMBIENT */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:float 10s ease-in-out infinite;}
+.o1{width:600px;height:600px;background:var(--orange);opacity:.07;top:-250px;left:-150px;}
+.o2{width:500px;height:500px;background:#3B82F6;opacity:.05;bottom:-200px;right:-150px;animation-delay:-5s;}
+.o3{width:350px;height:350px;background:var(--orange);opacity:.04;top:45%;left:40%;animation-delay:-3s;}
+@keyframes float{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-40px) scale(1.06);}}
+
+/* APP LAYOUT */
+.app{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* SIDEBAR */
+.sidebar{width:248px;flex-shrink:0;background:var(--g850);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto;overflow-x:hidden;}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--g700);border-radius:2px;}
+
+.logo-area{padding:22px 20px 18px;border-bottom:1px solid var(--border);}
+.logo-img{width:130px;height:auto;display:block;filter:brightness(1.1);}
+.logo-tag{margin-top:6px;font-size:9.5px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:2px;opacity:.75;}
+
+.sec-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;color:var(--text3);padding:14px 20px 6px;}
+.nav-section{padding:4px 0;border-bottom:1px solid var(--border);}
+.nav-section:last-of-type{border-bottom:none;}
+
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;border-radius:0;transition:all .18s;color:var(--text2);position:relative;user-select:none;}
+.nav-item:hover{background:var(--glass2);color:var(--text1);}
+.nav-item.active{background:var(--orange-glow);color:var(--orange);font-weight:500;}
+.nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--orange);border-radius:0 3px 3px 0;}
+.nav-ico{width:17px;height:17px;flex-shrink:0;opacity:.9;}
+.nav-lbl{font-size:13.5px;}
+.nbadge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;line-height:1.5;}
+.nbo{background:var(--orange);color:#fff;}
+.nbg{background:var(--success);color:#fff;}
+.nbb{background:var(--info);color:#fff;}
+
+.user-area{padding:14px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .2s;margin-top:auto;}
+.user-area:hover{background:var(--glass2);}
+.uav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#b85a12);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.uname{font-size:13px;font-weight:600;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.urole{font-size:11px;color:var(--text3);}
+
+/* MAIN */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow-y:auto;}
+.main::-webkit-scrollbar{width:5px;}
+.main::-webkit-scrollbar-thumb{background:var(--g700);border-radius:3px;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:14px;padding:13px 28px;border-bottom:1px solid var(--border);background:var(--g850);position:sticky;top:0;z-index:50;}
+.page-title{font-size:17px;font-weight:800;color:var(--text1);}
+.page-sub{font-size:12.5px;color:var(--text3);margin-left:4px;}
+.live-row{display:flex;align-items:center;gap:5px;margin-left:10px;}
+.live-dot{width:6px;height:6px;background:var(--success);border-radius:50%;animation:pulse-dot 1.6s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.3;}}
+.live-txt{font-size:10.5px;color:var(--success);font-weight:700;}
+.topbar-r{margin-left:auto;display:flex;align-items:center;gap:8px;}
+
+.search-wrap{display:flex;align-items:center;gap:8px;background:var(--g750);border:1px solid var(--border);border-radius:10px;padding:7px 14px;width:210px;transition:border-color .2s;}
+.search-wrap:hover{border-color:var(--border2);}
+.search-inp{background:none;border:none;outline:none;color:var(--text1);font-size:13px;font-family:'Outfit',sans-serif;width:100%;}
+.search-inp::placeholder{color:var(--text3);}
+
+.ico-btn{width:35px;height:35px;background:var(--g750);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--text2);position:relative;}
+.ico-btn:hover{border-color:var(--border2);color:var(--text1);}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--orange);border-radius:50%;border:1.5px solid var(--g850);}
+
+/* CONTENT */
+.content{padding:22px 28px;flex:1;}
+
+/* MODULE VIEWS — hidden by default */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ═══ DASHBOARD ═══ */
+.greeting-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;}
+.greet h1{font-size:24px;font-weight:900;color:var(--text1);margin-bottom:3px;font-family:'Space Grotesk',sans-serif;}
+.greet p{font-size:13px;color:var(--text3);}
+.greet .hl{color:var(--orange);}
+.date-chip{background:var(--g800);border:1px solid var(--border);border-radius:10px;padding:9px 16px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;cursor:pointer;transition:all .22s;animation:fadeUp .5s ease forwards;opacity:0;}
+.stat:nth-child(1){animation-delay:.05s;}
+.stat:nth-child(2){animation-delay:.1s;}
+.stat:nth-child(3){animation-delay:.15s;}
+.stat:nth-child(4){animation-delay:.2s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.stat:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.25);}
+.stat.accent{border-color:rgba(232,115,26,.3);}
+.stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background .22s;border-radius:var(--r) var(--r) 0 0;}
+.stat:hover::after,.stat.accent::after{background:var(--orange);}
+.stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+.stat-ico{width:32px;height:32px;border-radius:8px;background:var(--g700);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+.stat-ico svg{width:15px;height:15px;}
+.stat-val{font-size:30px;font-weight:900;color:var(--text1);line-height:1;margin-bottom:6px;font-family:'Space Grotesk',sans-serif;}
+.curr{font-size:16px;font-weight:600;color:var(--text2);}
+.stat-chg{font-size:12px;display:flex;align-items:center;gap:4px;}
+.up{color:var(--success);}
+.dn{color:var(--danger);}
+.sparkline{position:absolute;bottom:0;right:0;width:80px;height:38px;opacity:.25;}
+
+/* QUICK ACTIONS */
+.qa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+.qa{background:var(--g800);border:1px solid var(--border);border-radius:10px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:all .2s;color:var(--text2);text-align:center;}
+.qa:hover{border-color:var(--orange);color:var(--orange);background:rgba(232,115,26,.07);transform:translateY(-1px);}
+.qa svg{width:20px;height:20px;}
+.qa-lbl{font-size:11px;font-weight:600;}
+
+/* AI WIDGET */
+.ai-widget{background:linear-gradient(135deg,rgba(232,115,26,.1),rgba(232,115,26,.03));border:1px solid rgba(232,115,26,.22);border-radius:var(--r);padding:16px 20px;margin-bottom:18px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s;}
+.ai-widget:hover{border-color:rgba(232,115,26,.4);}
+.ai-widget::before{content:'';position:absolute;top:-50px;right:-50px;width:150px;height:150px;background:radial-gradient(circle,rgba(232,115,26,.12),transparent 70%);border-radius:50%;}
+.ai-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.ai-ico{width:28px;height:28px;border-radius:8px;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ai-title{font-size:13px;font-weight:700;color:var(--orange);}
+.ai-sub{font-size:11px;color:var(--text3);}
+.ai-insights{display:flex;flex-direction:column;gap:7px;}
+.ai-insight{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text2);line-height:1.45;}
+.ai-bullet{width:15px;height:15px;border-radius:50%;background:var(--orange-glow);border:1px solid rgba(232,115,26,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;font-size:8px;color:var(--orange);}
+
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 340px;gap:14px;margin-bottom:14px;}
+
+/* PANEL */
+.panel{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border);}
+.pt{font-size:14px;font-weight:700;color:var(--text1);}
+.ps{font-size:12px;color:var(--text3);margin-top:2px;}
+.pact{font-size:12px;color:var(--orange);cursor:pointer;font-weight:500;transition:opacity .2s;}
+.pact:hover{opacity:.75;}
+
+/* CHART */
+.chart-area{padding:18px 20px;}
+.chart-wrap{width:100%;height:175px;position:relative;}
+.chart-svg{width:100%;height:100%;overflow:visible;}
+
+/* PIPELINE BARS */
+.pipe-area{padding:16px 20px;}
+.pipe-stages{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;}
+.pipe-stage{text-align:center;}
+.stage-lbl{font-size:9.5px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+.bar-wrap{height:5px;background:var(--g750);border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.bar-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+.stage-v{font-size:14px;font-weight:800;color:var(--text1);font-family:'Space Grotesk',sans-serif;}
+.stage-c{font-size:11px;color:var(--text3);}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:10px;}
+.prog-lbl{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px;}
+.prog-lbl span:first-child{color:var(--text2);}
+.prog-lbl span:last-child{font-weight:700;color:var(--text1);}
+.prog-bar{height:5px;background:var(--g750);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+
+/* ACTIVITY */
+.act-list{}
+.act-item{display:flex;align-items:flex-start;gap:11px;padding:11px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.act-item:hover{background:var(--glass);}
+.act-item:last-child{border-bottom:none;}
+.act-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;margin-top:1px;}
+.act-body{flex:1;min-width:0;}
+.act-txt{font-size:13px;color:var(--text1);line-height:1.4;}
+.act-txt strong{font-weight:600;}
+.act-meta{font-size:11px;color:var(--text3);margin-top:3px;}
+.act-time{font-size:11px;color:var(--text3);flex-shrink:0;}
+
+/* TASKS */
+.task-item{display:flex;align-items:center;gap:11px;padding:10px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.task-item:hover{background:var(--glass);}
+.task-item:last-child{border-bottom:none;}
+.task-chk{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.task-chk.done{border-color:var(--success);background:var(--success);}
+.task-chk.done::after{content:'✓';font-size:9.5px;color:#fff;font-weight:700;}
+.task-txt{flex:1;font-size:13px;color:var(--text1);}
+.task-txt.done{text-decoration:line-through;color:var(--text3);}
+.task-av{width:23px;height:23px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+.task-due{font-size:11px;color:var(--text3);white-space:nowrap;}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+.bo{background:rgba(232,115,26,.14);color:var(--orange);}
+.bg2{background:rgba(46,204,113,.14);color:var(--success);}
+.bb{background:rgba(52,152,219,.14);color:var(--info);}
+.br{background:rgba(231,76,60,.14);color:var(--danger);}
+.bgr{background:var(--g750);color:var(--text3);}
+.bp{background:rgba(139,92,246,.14);color:var(--purple);}
+
+/* WHATSAPP PANEL */
+.wa-item{display:flex;align-items:center;gap:11px;padding:10px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.wa-item:hover{background:var(--glass);}
+.wa-item:last-child{border-bottom:none;}
+.wa-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+.wa-info{flex:1;min-width:0;}
+.wa-name{font-size:13px;font-weight:600;color:var(--text1);}
+.wa-msg{font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wa-time{font-size:11px;color:var(--text3);}
+.wa-cnt{display:inline-block;background:#25D366;color:#fff;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:10px;margin-top:2px;}
+
+/* LEADS TABLE */
+.leads-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.tbl-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.tbl-row:hover{background:var(--glass);}
+.tbl-row:last-child{border-bottom:none;}
+.tbl-hdr{padding:10px 20px;border-bottom:1px solid var(--border);}
+.tbl-hg{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;}
+.th-c{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);}
+.th-c:not(:first-child){text-align:right;}
+.l-name{font-size:13px;font-weight:600;color:var(--text1);}
+.l-co{font-size:11px;color:var(--text3);}
+.l-val{font-size:13px;font-weight:800;color:var(--text1);text-align:right;font-family:'Space Grotesk',sans-serif;}
+.l-score{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.s-hot{background:rgba(232,115,26,.18);color:var(--orange);border:1px solid rgba(232,115,26,.3);}
+.s-warm{background:rgba(243,156,18,.18);color:var(--warn);border:1px solid rgba(243,156,18,.3);}
+.s-cold{background:rgba(52,152,219,.18);color:var(--info);border:1px solid rgba(52,152,219,.3);}
+
+/* ═══ CRM MODULE ═══ */
+.crm-grid{display:grid;grid-template-columns:280px 1fr;gap:16px;}
+.contact-list{}
+.contact-item{display:flex;align-items:center;gap:11px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.contact-item:hover,.contact-item.sel{background:var(--glass2);}
+.contact-item.sel{border-left:3px solid var(--orange);}
+.c-av{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+.c-name{font-size:13px;font-weight:600;color:var(--text1);}
+.c-co{font-size:11px;color:var(--text3);}
+.crm-detail{display:flex;flex-direction:column;gap:14px;}
+.detail-hero{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:24px;display:flex;align-items:flex-start;gap:18px;}
+.dh-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0;}
+.dh-name{font-size:20px;font-weight:800;font-family:'Space Grotesk',sans-serif;margin-bottom:4px;}
+.dh-role{font-size:13px;color:var(--text3);margin-bottom:10px;}
+.dh-badges{display:flex;gap:6px;flex-wrap:wrap;}
+.dh-stats{margin-left:auto;display:flex;gap:20px;}
+.dhs{text-align:right;}
+.dhs-val{font-size:22px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:var(--orange);}
+.dhs-lbl{font-size:11px;color:var(--text3);}
+.timeline{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.tl-title{font-size:14px;font-weight:700;margin-bottom:16px;}
+.tl-item{display:flex;gap:14px;margin-bottom:16px;position:relative;}
+.tl-item::before{content:'';position:absolute;left:17px;top:36px;bottom:-16px;width:1px;background:var(--border);}
+.tl-item:last-child::before{display:none;}
+.tl-ico{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:2px solid var(--border);}
+.tl-body{flex:1;}
+.tl-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+.tl-action{font-size:13px;font-weight:600;color:var(--text1);}
+.tl-date{font-size:11px;color:var(--text3);}
+.tl-desc{font-size:12.5px;color:var(--text2);line-height:1.5;}
+
+/* ═══ PIPELINE KANBAN ═══ */
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;overflow-x:auto;padding-bottom:8px;}
+.k-col{background:var(--g850);border:1px solid var(--border);border-radius:var(--r);min-width:200px;}
+.k-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.k-title{font-size:13px;font-weight:700;color:var(--text1);}
+.k-count{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--g700);}
+.k-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:200px;}
+.k-card{background:var(--g800);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;}
+.k-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.k-card-company{font-size:13px;font-weight:700;color:var(--text1);margin-bottom:4px;}
+.k-card-val{font-size:14px;font-weight:800;color:var(--orange);font-family:'Space Grotesk',sans-serif;margin-bottom:8px;}
+.k-card-ft{display:flex;align-items:center;justify-content:space-between;}
+.k-card-usr{display:flex;gap:-4px;}
+.k-uav{width:22px;height:22px;border-radius:50%;border:2px solid var(--g800);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;margin-left:-6px;}
+.k-uav:first-child{margin-left:0;}
+.k-prob{font-size:11px;font-weight:700;}
+
+/* ═══ CAMPAIGNS ═══ */
+.camp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
+.camp-card{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s;}
+.camp-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.25);}
+.camp-banner{height:80px;position:relative;overflow:hidden;}
+.camp-info{padding:14px 16px;}
+.camp-name{font-size:14px;font-weight:700;color:var(--text1);margin-bottom:4px;}
+.camp-type{font-size:11px;color:var(--text3);margin-bottom:10px;}
+.camp-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.cs{text-align:center;padding:8px;background:var(--g750);border-radius:8px;}
+.cs-val{font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:var(--text1);}
+.cs-lbl{font-size:10px;color:var(--text3);}
+
+/* ═══ WHATSAPP MODULE ═══ */
+.wa-layout{display:grid;grid-template-columns:300px 1fr;gap:0;background:var(--g800);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;height:560px;}
+.wa-sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.wa-search{padding:12px;border-bottom:1px solid var(--border);}
+.wa-si{background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 12px;width:100%;display:flex;align-items:center;gap:8px;}
+.wa-si input{background:none;border:none;outline:none;color:var(--text1);font-size:13px;font-family:'Outfit',sans-serif;width:100%;}
+.wa-si input::placeholder{color:var(--text3);}
+.wa-chats{overflow-y:auto;flex:1;}
+.wa-chat-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.wa-chat-item:hover,.wa-chat-item.sel{background:var(--orange-glow);}
+.wa-ci-av{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;}
+.wa-ci-name{font-size:13px;font-weight:600;color:var(--text1);}
+.wa-ci-msg{font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;}
+.wa-ci-time{font-size:10.5px;color:var(--text3);text-align:right;}
+.wa-cnt2{display:inline-block;background:#25D366;color:#fff;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:10px;margin-top:2px;}
+.wa-main{display:flex;flex-direction:column;}
+.wa-top{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);}
+.wa-top-name{font-size:14px;font-weight:700;}
+.wa-top-status{font-size:11px;color:var(--success);}
+.wa-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--g900);}
+.msg-bubble{max-width:65%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;}
+.msg-in{background:var(--g750);border-radius:4px 12px 12px 12px;color:var(--text1);align-self:flex-start;}
+.msg-out{background:var(--orange);color:#fff;border-radius:12px 4px 12px 12px;align-self:flex-end;}
+.msg-time{font-size:10px;opacity:.65;margin-top:4px;text-align:right;}
+.wa-inp-area{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.wa-inp{flex:1;background:var(--g750);border:1px solid var(--border);border-radius:24px;padding:10px 18px;color:var(--text1);font-size:13px;font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;}
+.wa-inp:focus{border-color:var(--orange);}
+.wa-send{width:38px;height:38px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .2s;}
+.wa-send:hover{opacity:.85;}
+
+/* ═══ PROSPECTING ═══ */
+.prosp-layout{display:grid;grid-template-columns:1fr 320px;gap:16px;}
+.prosp-filters{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px;}
+.filter-title{font-size:13px;font-weight:700;color:var(--text1);}
+.filter-group{display:flex;flex-direction:column;gap:6px;}
+.filter-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.8px;}
+.filter-select{background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text1);font-size:13px;font-family:'Outfit',sans-serif;outline:none;width:100%;cursor:pointer;}
+.filter-input{background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text1);font-size:13px;font-family:'Outfit',sans-serif;outline:none;width:100%;}
+.filter-input::placeholder{color:var(--text3);}
+.search-btn{background:var(--orange);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:opacity .2s;}
+.search-btn:hover{opacity:.85;}
+.prosp-results{display:flex;flex-direction:column;gap:10px;}
+.prosp-card{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;}
+.prosp-card:hover{border-color:var(--border2);transform:translateX(2px);}
+.pc-av{width:44px;height:44px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;}
+.pc-info{flex:1;min-width:0;}
+.pc-name{font-size:14px;font-weight:700;color:var(--text1);}
+.pc-details{font-size:12px;color:var(--text3);margin-top:2px;}
+.pc-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+.pc-score{text-align:right;flex-shrink:0;}
+.pc-score-val{font-size:22px;font-weight:900;font-family:'Space Grotesk',sans-serif;}
+.pc-score-lbl{font-size:11px;color:var(--text3);}
+.pc-btn{margin-top:6px;font-size:11px;font-weight:600;padding:4px 10px;background:var(--orange-glow);border:1px solid rgba(232,115,26,.3);color:var(--orange);border-radius:20px;cursor:pointer;white-space:nowrap;}
+
+/* ═══ ANALYTICS ═══ */
+.analytics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}
+.analytics-full{display:grid;grid-template-columns:1fr;gap:14px;}
+.metric-row{display:flex;gap:14px;margin-bottom:14px;}
+.metric-box{flex:1;background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center;}
+.mb-val{font-size:36px;font-weight:900;font-family:'Space Grotesk',sans-serif;color:var(--orange);margin-bottom:4px;}
+.mb-lbl{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;}
+.mb-chg{font-size:13px;margin-top:6px;}
+
+/* ═══ SOCIAL MEDIA ═══ */
+.social-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px;}
+.social-card{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
+.sc-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.sc-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.sc-name{font-size:14px;font-weight:700;}
+.sc-handle{font-size:12px;color:var(--text3);}
+.sc-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.scm{text-align:center;padding:8px;background:var(--g750);border-radius:8px;}
+.scm-val{font-size:18px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:var(--text1);}
+.scm-lbl{font-size:10px;color:var(--text3);}
+.post-queue{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.post-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.post-item:hover{background:var(--glass);}
+.post-item:last-child{border-bottom:none;}
+.post-thumb{width:44px;height:44px;border-radius:8px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.post-info{flex:1;}
+.post-caption{font-size:13px;font-weight:600;color:var(--text1);}
+.post-details{font-size:11px;color:var(--text3);margin-top:2px;}
+.post-nets{display:flex;gap:5px;}
+.net-ico{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+
+/* ═══ AI ASSISTANT ═══ */
+.ai-layout{display:grid;grid-template-columns:240px 1fr;gap:0;background:var(--g800);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;height:600px;}
+.ai-sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.ai-sb-head{padding:16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;}
+.ai-conv-list{flex:1;overflow-y:auto;}
+.ai-conv-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.ai-conv-item:hover,.ai-conv-item.sel{background:var(--orange-glow);}
+.ai-conv-title{font-size:13px;font-weight:600;color:var(--text1);margin-bottom:2px;}
+.ai-conv-preview{font-size:11px;color:var(--text3);}
+.ai-chat{display:flex;flex-direction:column;}
+.ai-chat-msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
+.ai-msg{display:flex;gap:12px;align-items:flex-start;}
+.ai-msg.user{flex-direction:row-reverse;}
+.ai-msg-av{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.ai-msg-av.ai-av{background:var(--orange);}
+.ai-msg-av.user-av{background:var(--g700);}
+.ai-bubble{padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.6;max-width:75%;}
+.ai-bubble.ai{background:var(--g750);color:var(--text1);border-radius:4px 12px 12px 12px;}
+.ai-bubble.user{background:var(--orange);color:#fff;border-radius:12px 4px 12px 12px;}
+.ai-inp-row{padding:14px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ai-inp{flex:1;background:var(--g750);border:1px solid var(--border);border-radius:12px;padding:11px 16px;color:var(--text1);font-size:13px;font-family:'Outfit',sans-serif;outline:none;resize:none;transition:border-color .2s;}
+.ai-inp:focus{border-color:var(--orange);}
+.ai-send-btn{width:40px;height:40px;background:var(--orange);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .2s;}
+.ai-send-btn:hover{opacity:.85;}
+
+/* ═══ CALENDAR ═══ */
+.cal-layout{display:grid;grid-template-columns:1fr 280px;gap:14px;}
+.cal-grid{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.cal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+.cal-month{font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;}
+.cal-nav{display:flex;gap:8px;}
+.cal-nav-btn{width:30px;height:30px;background:var(--g750);border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:all .2s;}
+.cal-nav-btn:hover{border-color:var(--orange);color:var(--orange);}
+.cal-days-head{display:grid;grid-template-columns:repeat(7,1fr);padding:10px 20px 0;}
+.cal-day-lbl{text-align:center;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;padding:6px;}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);padding:0 16px 16px;gap:4px;}
+.cal-day{min-height:64px;border-radius:8px;padding:6px;cursor:pointer;transition:background .15s;position:relative;}
+.cal-day:hover{background:var(--glass2);}
+.cal-day.today{background:rgba(232,115,26,.12);border:1px solid rgba(232,115,26,.3);}
+.cal-day.other-month{opacity:.4;}
+.cal-day-num{font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:3px;}
+.cal-day.today .cal-day-num{color:var(--orange);font-weight:800;}
+.cal-event{font-size:10px;padding:2px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ev-orange{background:rgba(232,115,26,.2);color:var(--orange);}
+.ev-blue{background:rgba(52,152,219,.2);color:var(--info);}
+.ev-green{background:rgba(46,204,113,.2);color:var(--success);}
+.ev-purple{background:rgba(139,92,246,.2);color:var(--purple);}
+
+/* ═══ EMAIL MARKETING ═══ */
+.email-layout{display:grid;grid-template-columns:1fr 300px;gap:16px;}
+.email-builder{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.eb-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.eb-preview{padding:20px;background:var(--g900);min-height:400px;}
+.email-preview-card{background:#fff;border-radius:12px;overflow:hidden;max-width:480px;margin:0 auto;font-family:'Outfit',sans-serif;}
+.ep-banner{height:120px;background:linear-gradient(135deg,var(--g900),var(--g700));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.ep-body{padding:24px;color:#222;}
+.ep-h1{font-size:22px;font-weight:800;margin-bottom:10px;color:#111;}
+.ep-p{font-size:14px;line-height:1.7;color:#555;margin-bottom:16px;}
+.ep-btn{background:var(--orange);color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:700;display:inline-block;cursor:pointer;}
+.ep-footer{padding:16px 24px;background:#f8f8f8;text-align:center;font-size:12px;color:#888;}
+.email-metrics{display:flex;flex-direction:column;gap:12px;}
+.em-card{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.em-title{font-size:13px;font-weight:700;margin-bottom:12px;}
+.em-stat{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.em-stat:last-child{border-bottom:none;}
+.em-s-lbl{font-size:12.5px;color:var(--text2);}
+.em-s-val{font-size:13px;font-weight:700;color:var(--text1);}
+
+/* ═══ TASKS MODULE ═══ */
+.tasks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.tasks-col{background:var(--g850);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.tc-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.tc-title{font-size:13px;font-weight:700;color:var(--text1);display:flex;align-items:center;gap:8px;}
+.tc-dot{width:8px;height:8px;border-radius:50%;}
+.tc-count{font-size:10.5px;padding:2px 7px;border-radius:20px;background:var(--g700);color:var(--text3);font-weight:700;}
+.tc-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:300px;}
+.tc-card{background:var(--g800);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;}
+.tc-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.tc-card-title{font-size:13px;font-weight:600;color:var(--text1);margin-bottom:6px;}
+.tc-card-desc{font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.4;}
+.tc-card-ft{display:flex;align-items:center;justify-content:space-between;}
+.tc-prio{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;}
+.prio-high{background:rgba(231,76,60,.15);color:var(--danger);}
+.prio-mid{background:rgba(243,156,18,.15);color:var(--warn);}
+.prio-low{background:rgba(52,152,219,.15);color:var(--info);}
+.add-task{padding:10px;border-top:1px solid var(--border);}
+.add-task-btn{width:100%;background:var(--g750);border:1px dashed var(--border2);border-radius:8px;padding:9px;color:var(--text3);font-size:12.5px;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.add-task-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-glow);}
+
+/* ═══ SETTINGS ═══ */
+.settings-layout{display:grid;grid-template-columns:200px 1fr;gap:16px;}
+.settings-nav{}
+.settings-nav-item{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;margin-bottom:3px;display:flex;align-items:center;gap:8px;}
+.settings-nav-item:hover{background:var(--glass2);color:var(--text1);}
+.settings-nav-item.active{background:var(--orange-glow);color:var(--orange);}
+.settings-panel{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:24px;}
+.sp-section{margin-bottom:28px;}
+.sp-section:last-child{margin-bottom:0;}
+.sp-section-title{font-size:15px;font-weight:700;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.setting-row:last-child{border-bottom:none;}
+.setting-info .setting-name{font-size:13.5px;font-weight:600;color:var(--text1);}
+.setting-info .setting-desc{font-size:12px;color:var(--text3);margin-top:2px;}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--g700);border-radius:12px;transition:.3s;border:1px solid var(--border);}
+.toggle input:checked + .toggle-track{background:var(--orange);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(20px);}
+.form-field{margin-bottom:14px;}
+.form-label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.form-inp{width:100%;background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text1);font-size:13.5px;font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;}
+.form-inp:focus{border-color:var(--orange);}
+.save-btn{background:var(--orange);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:opacity .2s;}
+.save-btn:hover{opacity:.85;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--g700);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--g600);}
+
+/* TOOLTIP */
+[title]:hover{cursor:pointer;}
+
+/* ANIMATIONS */
+@keyframes slideIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.view.active > *{animation:slideIn .3s ease forwards;}
+
+
+/* ═══ LOGIN / USERS ═══ */
+body.login-locked .app{display:none;}
+.login-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 20% 10%,rgba(232,115,26,.16),transparent 32%),radial-gradient(circle at 80% 90%,rgba(52,152,219,.10),transparent 34%),var(--g900);}
+body:not(.login-locked) .login-screen{display:none;}
+.login-card{width:min(440px,100%);background:rgba(26,29,33,.88);border:1px solid var(--border2);border-radius:24px;padding:30px;box-shadow:0 28px 90px rgba(0,0,0,.38);backdrop-filter:blur(18px);position:relative;overflow:hidden;}
+.login-card::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--orange),var(--orange2));}
+.login-logo{width:150px;height:auto;margin-bottom:22px;filter:brightness(1.08);}
+.login-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;margin-bottom:6px;}
+.login-sub{font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:22px;}
+.login-error{display:none;background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.28);color:#ffb4ac;border-radius:10px;padding:10px 12px;font-size:12.5px;margin-bottom:14px;}
+.login-form{display:flex;flex-direction:column;gap:13px;}
+.login-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);margin-bottom:6px;}
+.login-field input{width:100%;background:var(--g750);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text1);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:.2s;}
+.login-field input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,115,26,.12);}
+.login-btn{margin-top:6px;width:100%;border:none;border-radius:12px;padding:13px 16px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(232,115,26,.25);}
+.login-foot{margin-top:18px;font-size:11.5px;color:var(--text3);text-align:center;}
+.user-manager{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;}
+.user-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.user-form-grid .wide{grid-column:1/-1;}
+.users-list{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--g850);}
+.user-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid var(--border);}
+.user-row:last-child{border-bottom:none;}
+.user-row-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#b85a12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;}
+.user-row-name{font-size:13px;font-weight:700;color:var(--text1);}
+.user-row-meta{font-size:11.5px;color:var(--text3);}
+.user-row-actions{display:flex;align-items:center;gap:6px;}
+.small-action{border:1px solid var(--border);background:var(--g750);color:var(--text2);border-radius:8px;padding:6px 8px;font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:.2s;}
+.small-action:hover{border-color:var(--orange);color:var(--orange);}
+.small-action.danger:hover{border-color:var(--danger);color:var(--danger);}
+.logout-link{margin-left:auto;font-size:11px;color:var(--orange);cursor:pointer;white-space:nowrap;}
+@media(max-width:900px){.user-manager{grid-template-columns:1fr}.user-form-grid{grid-template-columns:1fr}.user-form-grid .wide{grid-column:auto}}
+
+
+
+/* ═══ ENTERPRISE ADD-ONS ═══ */
+.enterprise-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.enterprise-card{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden;transition:all .2s;}
+.enterprise-card:hover{border-color:rgba(232,115,26,.35);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.22);}
+.enterprise-card::after{content:'';position:absolute;right:-24px;top:-24px;width:90px;height:90px;background:radial-gradient(circle,rgba(232,115,26,.12),transparent 70%);}
+.ec-title{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;font-weight:700;margin-bottom:8px;}
+.ec-value{font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:900;color:var(--text1);line-height:1;}
+.ec-sub{font-size:12px;color:var(--text3);margin-top:7px;}
+.module-shell{display:grid;grid-template-columns:320px 1fr;gap:16px;}
+.module-panel{background:var(--g800);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.module-pad{padding:18px 20px;}
+.dropzone{border:1.5px dashed rgba(232,115,26,.45);background:rgba(232,115,26,.06);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .2s;}
+.dropzone:hover{background:rgba(232,115,26,.1);transform:translateY(-1px);}
+.drop-ico{font-size:32px;margin-bottom:8px;}
+.drop-title{font-size:14px;font-weight:800;color:var(--text1);}
+.drop-sub{font-size:12px;color:var(--text3);line-height:1.5;margin-top:5px;}
+.mapping-row,.integration-row,.workflow-row,.segment-row,.report-row,.audit-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .15s;}
+.mapping-row:hover,.integration-row:hover,.workflow-row:hover,.segment-row:hover,.report-row:hover,.audit-row:hover{background:var(--glass);}
+.mapping-row:last-child,.integration-row:last-child,.workflow-row:last-child,.segment-row:last-child,.report-row:last-child,.audit-row:last-child{border-bottom:none;}
+.map-left{display:flex;align-items:center;gap:10px;min-width:0;}
+.map-icon{width:34px;height:34px;border-radius:9px;background:var(--g750);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.map-title{font-size:13px;font-weight:700;color:var(--text1);}
+.map-meta{font-size:11.5px;color:var(--text3);margin-top:2px;}
+.small-action{background:var(--g750);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 9px;font-size:11px;font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;}
+.small-action:hover{border-color:var(--orange);color:var(--orange);}
+.small-action.danger:hover{border-color:var(--danger);color:var(--danger);}
+.data-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.data-table th{color:var(--text3);text-transform:uppercase;letter-spacing:.7px;font-size:10.5px;text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.data-table tr:hover td{background:var(--glass);color:var(--text1);}
+.workflow-canvas{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch;}
+.workflow-node{background:var(--g750);border:1px solid var(--border);border-radius:12px;padding:14px;position:relative;min-height:112px;}
+.workflow-node::after{content:'→';position:absolute;right:-16px;top:40%;color:var(--orange);font-size:20px;font-weight:900;}
+.workflow-node:last-child::after{display:none;}
+.node-type{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--orange);font-weight:800;margin-bottom:8px;}
+.node-title{font-size:13px;font-weight:700;color:var(--text1);line-height:1.35;}
+.node-meta{font-size:11.5px;color:var(--text3);margin-top:8px;line-height:1.45;}
+.segment-builder{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.condition-chip{display:inline-flex;align-items:center;gap:6px;background:var(--g750);border:1px solid var(--border);border-radius:20px;padding:6px 10px;font-size:12px;color:var(--text2);margin:3px;}
+.permission-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.permission-card{background:var(--g750);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.permission-title{font-size:13px;font-weight:700;color:var(--text1);margin-bottom:8px;}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--g800);border:1px solid rgba(232,115,26,.4);border-radius:12px;padding:13px 16px;color:var(--text1);box-shadow:0 12px 40px rgba(0,0,0,.35);z-index:5000;display:none;font-size:13px;}
+.toast.show{display:block;animation:slideIn .25s ease forwards;}
+.command-palette{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);z-index:4500;display:none;align-items:flex-start;justify-content:center;padding-top:90px;}
+.command-palette.show{display:flex;}
+.command-box{width:min(720px,92vw);background:var(--g850);border:1px solid var(--border2);border-radius:18px;box-shadow:0 30px 90px rgba(0,0,0,.45);overflow:hidden;}
+.command-input{width:100%;background:var(--g800);border:0;border-bottom:1px solid var(--border);padding:18px 22px;color:var(--text1);font-size:16px;font-family:'Outfit',sans-serif;outline:none;}
+.command-results{padding:10px;max-height:360px;overflow-y:auto;}
+.command-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;cursor:pointer;color:var(--text2);}
+.command-item:hover{background:var(--orange-glow);color:var(--orange);}
+@media(max-width:1100px){.enterprise-grid{grid-template-columns:repeat(2,1fr)}.module-shell,.prosp-layout,.email-layout,.cal-layout{grid-template-columns:1fr}.workflow-canvas,.segment-builder,.permission-grid{grid-template-columns:1fr}.workflow-node::after{display:none}}
+
+</style>
+<script>
+window.LXGEST_WHATSAPP_CONFIG = {
+  businessNumber: "+351 913135420",
+  businessNumberRaw: "351913135420",
+  aiBotEnabled: true,
+  backendApi: "/api",
+  webhookPath: "/api/whatsapp/webhook"
+};
+</script>
+</head>
+<body class="login-locked">
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <img src="/logo-lxgest.png" class="login-logo" alt="LXGest">
+    <div class="login-title">Entrar na plataforma</div>
+    <div class="login-sub">Acesso seguro ao CRM, Marketing Hub, WhatsApp Business e operações LXGest.</div>
+    <div class="login-error" id="loginError">Email ou senha inválidos.</div>
+    <form class="login-form" onsubmit="loginUser(event)">
+      <div class="login-field"><label>Email</label><input id="loginEmail" type="email" autocomplete="username" placeholder="nome@lxgest.com" required></div>
+      <div class="login-field"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required></div>
+      <button class="login-btn" type="submit">Entrar</button>
+    </form>
+    <div class="login-foot">LXGest CRM Platform · Portugal</div>
+  </div>
+</div>
+
+<div class="ambient"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="logo-area">
+    <img src="/logo-lxgest.png" class="logo-img" alt="LXGest">
+    <div class="logo-tag">CRM Platform</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="sec-label">Principal</div>
+    <div class="nav-item active" onclick="go('dashboard',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span class="nav-lbl">Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="go('crm',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="nav-lbl">CRM & Clientes</span>
+    </div>
+    <div class="nav-item" onclick="go('pipeline',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <span class="nav-lbl">Pipeline</span>
+      <span class="nbadge nbo">58</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="sec-label">Marketing</div>
+    <div class="nav-item" onclick="go('campaigns',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+      <span class="nav-lbl">Campanhas</span>
+      <span class="nbadge nbb">3</span>
+    </div>
+    <div class="nav-item" onclick="go('email',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span class="nav-lbl">Email Marketing</span>
+    </div>
+    <div class="nav-item" onclick="go('whatsapp',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      <span class="nav-lbl">WhatsApp</span>
+      <span class="nbadge nbg">7</span>
+    </div>
+    <div class="nav-item" onclick="go('social',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      <span class="nav-lbl">Redes Sociais</span>
+    </div>
+    <div class="nav-item" onclick="go('prospecting',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="nav-lbl">Prospecção IA</span>
+    </div>
+    <div class="nav-item" onclick="go('segments',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      <span class="nav-lbl">Segmentação</span>
+    </div>
+    <div class="nav-item" onclick="go('automations',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2v6m0 8v6M4.93 4.93l4.24 4.24m5.66 5.66 4.24 4.24M2 12h6m8 0h6M4.93 19.07l4.24-4.24m5.66-5.66 4.24-4.24"/></svg>
+      <span class="nav-lbl">Automações</span>
+      <span class="nbadge nbo">12</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="sec-label">Operações</div>
+    <div class="nav-item" onclick="go('importer',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span class="nav-lbl">Importador</span>
+      <span class="nbadge nbb">XLSX</span>
+    </div>
+    <div class="nav-item" onclick="go('users',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+      <span class="nav-lbl">Utilizadores</span>
+    </div>
+    <div class="nav-item" onclick="go('tasks',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span class="nav-lbl">Tarefas</span>
+      <span class="nbadge nbo">5</span>
+    </div>
+    <div class="nav-item" onclick="go('calendar',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-lbl">Calendário</span>
+    </div>
+    <div class="nav-item" onclick="go('analytics',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="nav-lbl">Analytics</span>
+    </div>
+    <div class="nav-item" onclick="go('ai',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="nav-lbl">Assistente IA</span>
+    </div>
+    <div class="nav-item" onclick="go('integrations',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <span class="nav-lbl">Integrações</span>
+    </div>
+    <div class="nav-item" onclick="go('reports',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span class="nav-lbl">Relatórios</span>
+    </div>
+    <div class="nav-item" onclick="go('settings',this)">
+      <svg class="nav-ico" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      <span class="nav-lbl">Configurações</span>
+    </div>
+  </div>
+
+  <div class="user-area">
+    <div class="uav" id="currentAvatar">MA</div>
+    <div>
+      <div class="uname" id="currentUserName">Marco Anile</div>
+      <div class="urole" id="currentUserRole">Administrador Master · LXGest</div>
+    </div>
+    <div class="logout-link" onclick="logoutUser()">Sair</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <span class="page-title" id="pt">Dashboard</span>
+      <span class="page-sub" id="ps">— Visão executiva em tempo real</span>
+    </div>
+    <div class="live-row"><div class="live-dot"></div><span class="live-txt">LIVE</span></div>
+    <div class="topbar-r">
+      <div class="search-wrap">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="var(--text3)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-inp" placeholder="Pesquisar no CRM...">
+      </div>
+      <div class="ico-btn"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div class="ico-btn"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+  <!-- ══════════ DASHBOARD ══════════ -->
+  <div class="view active" id="v-dashboard">
+    <div class="greeting-row">
+      <div class="greet"><h1>Bom dia, <span class="hl">João</span> 👋</h1><p>Quarta-feira, 14 Maio 2025 · 3 reuniões hoje</p></div>
+      <div class="date-chip"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Semana 20 · Q2 2025</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat accent">
+        <div class="stat-top"><div><div class="stat-label">Receita do Mês</div></div><div class="stat-ico"><svg fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+        <div class="stat-val"><span class="curr">€</span>84.320</div>
+        <div class="stat-chg up">↑ +12.4% vs mês anterior</div>
+        <svg class="sparkline" viewBox="0 0 80 38"><polyline points="0,32 12,26 24,30 36,18 48,20 60,12 72,8 80,10" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="stat">
+        <div class="stat-top"><div><div class="stat-label">Novos Leads</div></div><div class="stat-ico"><svg fill="none" viewBox="0 0 24 24" stroke="var(--info)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div></div>
+        <div class="stat-val">247</div>
+        <div class="stat-chg up">↑ +8.1% esta semana</div>
+        <svg class="sparkline" viewBox="0 0 80 38"><polyline points="0,34 12,28 24,30 36,22 48,18 60,20 72,14 80,16" fill="none" stroke="var(--info)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="stat">
+        <div class="stat-top"><div><div class="stat-label">Taxa Conversão</div></div><div class="stat-ico"><svg fill="none" viewBox="0 0 24 24" stroke="var(--success)" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div></div>
+        <div class="stat-val">34.2<span class="curr">%</span></div>
+        <div class="stat-chg up">↑ +2.8pp vs meta</div>
+        <svg class="sparkline" viewBox="0 0 80 38"><polyline points="0,35 12,30 24,28 36,24 48,22 60,18 72,16 80,14" fill="none" stroke="var(--success)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="stat">
+        <div class="stat-top"><div><div class="stat-label">Negócios Ativos</div></div><div class="stat-ico"><svg fill="none" viewBox="0 0 24 24" stroke="var(--warn)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div></div>
+        <div class="stat-val">58</div>
+        <div class="stat-chg dn">↓ -3 vs semana passada</div>
+        <svg class="sparkline" viewBox="0 0 80 38"><polyline points="0,14 12,18 24,16 36,22 48,22 60,20 72,24 80,26" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+
+    <div class="qa-grid">
+      <div class="qa"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg><div class="qa-lbl">Novo Lead</div></div>
+      <div class="qa"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><div class="qa-lbl">Campanha Email</div></div>
+      <div class="qa"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><div class="qa-lbl">WhatsApp Massa</div></div>
+      <div class="qa"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="qa-lbl">Importar Excel</div></div>
+      <div class="qa"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="3" x2="12" y2="7"/></svg><div class="qa-lbl">Agendar Reunião</div></div>
+    </div>
+
+    <div class="ai-widget">
+      <div class="ai-head">
+        <div class="ai-ico"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div><div class="ai-title">LXGest Intelligence · IA Insights</div><div class="ai-sub">Análise automática · atualizada há 3 minutos</div></div>
+        <span style="margin-left:auto;font-size:11px;color:var(--orange);font-weight:600;">Ver todos →</span>
+      </div>
+      <div class="ai-insights">
+        <div class="ai-insight"><div class="ai-bullet">✦</div><span><strong style="color:var(--text1)">Tecnilab Lda</strong> visitou o site 3× hoje — janela de oportunidade elevada. Score IA: 98/100. Contactar agora.</span></div>
+        <div class="ai-insight"><div class="ai-bullet">✦</div><span>Taxa de abertura da última newsletter foi <strong style="color:var(--text1)">47.3%</strong> (+19pp acima da média do setor). Segmento B2B tech a responder melhor.</span></div>
+        <div class="ai-insight"><div class="ai-bullet">✦</div><span>5 leads sem atividade há +7 dias. Automação de follow-up recomendada para recuperar <strong style="color:var(--orange)">€28.400</strong> em risco de perda.</span></div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div>
+        <div class="panel" style="margin-bottom:14px;">
+          <div class="ph"><div><div class="pt">Performance de Vendas 2025</div><div class="ps">Jan–Mai · Meta: €90.000/mês</div></div><div style="display:flex;align-items:center;gap:14px;"><span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;"><span style="width:10px;height:3px;background:var(--orange);display:inline-block;border-radius:2px;"></span>Receita</span><span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;"><span style="width:10px;height:2px;background:var(--info);display:inline-block;border-radius:2px;border-top:1px dashed var(--info);"></span>Meta</span><span class="pact">Exportar ↗</span></div></div>
+          <div class="chart-area"><div class="chart-wrap">
+            <svg class="chart-svg" viewBox="0 0 560 160" preserveAspectRatio="none">
+              <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8731A" stop-opacity=".22"/><stop offset="100%" stop-color="#E8731A" stop-opacity="0"/></linearGradient></defs>
+              <line x1="0" y1="20" x2="560" y2="20" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="0" y1="60" x2="560" y2="60" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="0" y1="100" x2="560" y2="100" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="0" y1="140" x2="560" y2="140" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <line x1="0" y1="36" x2="560" y2="36" stroke="var(--info)" stroke-width="1" stroke-dasharray="5,4" opacity=".4"/>
+              <path d="M0,140 L80,112 L160,96 L240,82 L320,64 L400,48 L480,36 L560,40 L560,140 Z" fill="url(#ag)"/>
+              <path d="M0,140 L80,112 L160,96 L240,82 L320,64 L400,48 L480,36 L560,40" fill="none" stroke="var(--orange)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="80" cy="112" r="3.5" fill="var(--g800)" stroke="var(--orange)" stroke-width="2"/>
+              <circle cx="160" cy="96" r="3.5" fill="var(--g800)" stroke="var(--orange)" stroke-width="2"/>
+              <circle cx="240" cy="82" r="3.5" fill="var(--g800)" stroke="var(--orange)" stroke-width="2"/>
+              <circle cx="320" cy="64" r="3.5" fill="var(--g800)" stroke="var(--orange)" stroke-width="2"/>
+              <circle cx="400" cy="48" r="3.5" fill="var(--g800)" stroke="var(--orange)" stroke-width="2"/>
+              <circle cx="480" cy="36" r="5" fill="var(--orange)" stroke="var(--orange)" stroke-width="2"/>
+              <text x="80" y="156" text-anchor="middle" font-size="10" fill="#546070" font-family="Outfit">Jan</text>
+              <text x="160" y="156" text-anchor="middle" font-size="10" fill="#546070" font-family="Outfit">Fev</text>
+              <text x="240" y="156" text-anchor="middle" font-size="10" fill="#546070" font-family="Outfit">Mar</text>
+              <text x="320" y="156" text-anchor="middle" font-size="10" fill="#546070" font-family="Outfit">Abr</text>
+              <text x="400" y="156" text-anchor="middle" font-size="10" fill="#546070" font-family="Outfit">Mai</text>
+              <text x="480" y="156" text-anchor="middle" font-size="10" fill="var(--orange)" font-family="Outfit" font-weight="600">Atual</text>
+              <text x="4" y="24" font-size="9" fill="#546070" font-family="Outfit">€90k</text>
+              <text x="4" y="64" font-size="9" fill="#546070" font-family="Outfit">€70k</text>
+              <text x="4" y="104" font-size="9" fill="#546070" font-family="Outfit">€50k</text>
+              <text x="4" y="144" font-size="9" fill="#546070" font-family="Outfit">€30k</text>
+            </svg>
+          </div></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div><div class="pt">Funil de Vendas</div><div class="ps">58 negócios · €284.600 potencial</div></div><span class="pact" onclick="go('pipeline',document.querySelector('[onclick*=pipeline]'))">Pipeline Kanban →</span></div>
+          <div class="pipe-area">
+            <div class="pipe-stages">
+              <div class="pipe-stage"><div class="stage-lbl">Prospeção</div><div class="bar-wrap"><div class="bar-fill" style="width:0%;background:#3498DB;" data-w="100"></div></div><div class="stage-v">24</div><div class="stage-c">leads</div></div>
+              <div class="pipe-stage"><div class="stage-lbl">Contacto</div><div class="bar-wrap"><div class="bar-fill" style="width:0%;background:#9B59B6;" data-w="75"></div></div><div class="stage-v">18</div><div class="stage-c">leads</div></div>
+              <div class="pipe-stage"><div class="stage-lbl">Proposta</div><div class="bar-wrap"><div class="bar-fill" style="width:0%;background:var(--orange);" data-w="55"></div></div><div class="stage-v">11</div><div class="stage-c">leads</div></div>
+              <div class="pipe-stage"><div class="stage-lbl">Negociação</div><div class="bar-wrap"><div class="bar-fill" style="width:0%;background:var(--warn);" data-w="30"></div></div><div class="stage-v">7</div><div class="stage-c">leads</div></div>
+              <div class="pipe-stage"><div class="stage-lbl">Fechado</div><div class="bar-wrap"><div class="bar-fill" style="width:0%;background:var(--success);" data-w="15"></div></div><div class="stage-v">4</div><div class="stage-c">leads</div></div>
+            </div>
+            <div class="prog-wrap"><div class="prog-lbl"><span>Meta mensal (€90.000)</span><span>93.7% — €84.320</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--orange);" data-w="93.7"></div></div></div>
+            <div class="prog-wrap"><div class="prog-lbl"><span>Leads qualificados</span><span>72%</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--info);" data-w="72"></div></div></div>
+            <div class="prog-wrap" style="margin-bottom:0;"><div class="prog-lbl"><span>NPS equipa comercial</span><span>88/100</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--success);" data-w="88"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="panel">
+          <div class="ph"><div><div class="pt">Atividade Recente</div></div><span class="pact">Ver tudo</span></div>
+          <div class="act-list">
+            <div class="act-item"><div class="act-av" style="background:linear-gradient(135deg,var(--orange),#b85a12)">MA</div><div class="act-body"><div class="act-txt"><strong>Maria Alves</strong> fechou negócio com Imobiliária Norte</div><div class="act-meta">€12.500 · CRM Pipeline</div></div><div class="act-time">2m</div></div>
+            <div class="act-item"><div class="act-av" style="background:linear-gradient(135deg,#3498DB,#1a6fa8)">RC</div><div class="act-body"><div class="act-txt"><strong>Rui Costa</strong> criou 5 leads via Prospecção IA</div><div class="act-meta">Lisboa · B2B Tech</div></div><div class="act-time">18m</div></div>
+            <div class="act-item"><div class="act-av" style="background:#25D366">WA</div><div class="act-body"><div class="act-txt">Campanha <strong>WhatsApp #14</strong> — 420 msgs</div><div class="act-meta">94% entregue · 38% resposta</div></div><div class="act-time">42m</div></div>
+            <div class="act-item"><div class="act-av" style="background:#9B59B6">JS</div><div class="act-body"><div class="act-txt"><strong>João Santos</strong> agendou reunião com Grupotec</div><div class="act-meta">Hoje 15h00 · Zoom</div></div><div class="act-time">1h</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div><div class="pt">Tarefas de Hoje</div><div class="ps">3 de 8 concluídas</div></div><span class="pact" onclick="go('tasks',document.querySelector('[onclick*=tasks]'))">Gestão →</span></div>
+          <div>
+            <div class="task-item"><div class="task-chk done"></div><div class="task-txt done">Enviar proposta Tecnilab Lda</div><div class="task-av" style="background:var(--orange)">JF</div><div class="task-due">Feito</div></div>
+            <div class="task-item"><div class="task-chk"></div><div class="task-txt">Follow-up Construções Mário</div><div class="task-av" style="background:#3498DB">RC</div><div class="task-due" style="color:var(--danger);">Atrasado</div></div>
+            <div class="task-item"><div class="task-chk"></div><div class="task-txt">Preparar relatório mensal Q2</div><div class="task-av" style="background:#9B59B6">MA</div><div class="task-due">18h00</div></div>
+            <div class="task-item"><div class="task-chk"></div><div class="task-txt">Reunião equipa comercial</div><div class="task-av" style="background:var(--orange)">JF</div><div class="task-due">15h00</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div style="display:flex;align-items:center;gap:8px;"><svg width="15" height="15" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><div class="pt">WhatsApp Business</div></div><span class="pact" onclick="go('whatsapp',document.querySelector('[onclick*=whatsapp]'))">Abrir →</span></div>
+          <div>
+            <div class="wa-item"><div class="wa-av" style="background:var(--orange)">TL</div><div class="wa-info"><div class="wa-name">Tecnilab Lda</div><div class="wa-msg">Gostávamos de marcar uma reunião...</div></div><div><div class="wa-time">10:24</div><div class="wa-cnt">3</div></div></div>
+            <div class="wa-item"><div class="wa-av" style="background:#3498DB">CM</div><div class="wa-info"><div class="wa-name">Construções Mário</div><div class="wa-msg">Recebemos a proposta, obrigado!</div></div><div><div class="wa-time">09:58</div><div class="wa-cnt">1</div></div></div>
+            <div class="wa-item" style="opacity:.55;"><div class="wa-av" style="background:var(--g600)">IN</div><div class="wa-info"><div class="wa-name">Imob. Norte</div><div class="wa-msg">Confirmado para sexta-feira 10h</div></div><div><div class="wa-time">Ontem</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="leads-grid">
+      <div class="panel">
+        <div class="ph"><div><div class="pt">Leads Prioritários</div><div class="ps">Score IA · Portugal</div></div><span class="pact">Ver todos →</span></div>
+        <div class="tbl-hdr"><div class="tbl-hg"><span class="th-c">Empresa</span><span class="th-c" style="text-align:right">Valor</span><span class="th-c" style="text-align:right">Estado</span><span class="th-c" style="text-align:right">Score</span></div></div>
+        <div class="tbl-row"><div><div class="l-name">Tecnilab Lda</div><div class="l-co">Tecnologia · Lisboa</div></div><div class="l-val">€28.500</div><div><span class="badge bo">Negociação</span></div><div><div class="l-score s-hot">98</div></div></div>
+        <div class="tbl-row"><div><div class="l-name">Grupotec SA</div><div class="l-co">Indústria · Porto</div></div><div class="l-val">€45.000</div><div><span class="badge bb">Proposta</span></div><div><div class="l-score s-hot">94</div></div></div>
+        <div class="tbl-row"><div><div class="l-name">Medigest Lda</div><div class="l-co">Saúde · Braga</div></div><div class="l-val">€12.200</div><div><span class="badge bg2">Contacto</span></div><div><div class="l-score s-warm">81</div></div></div>
+        <div class="tbl-row"><div><div class="l-name">Construtora NW</div><div class="l-co">Construção · Aveiro</div></div><div class="l-val">€8.800</div><div><span class="badge bgr">Prospeção</span></div><div><div class="l-score s-cold">63</div></div></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><div><div class="pt">Canais de Marketing</div><div class="ps">Performance Mai 2025</div></div></div>
+        <div style="padding:16px 20px;">
+          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:var(--orange);border-radius:50%;display:inline-block;"></span>Email Marketing</span><span>47.3% abertura</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--orange);" data-w="47"></div></div></div>
+          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#25D366;border-radius:50%;display:inline-block;"></span>WhatsApp</span><span>94% entrega</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#25D366;" data-w="94"></div></div></div>
+          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#0077B5;border-radius:50%;display:inline-block;"></span>LinkedIn</span><span>8.4% CTR</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#0077B5;" data-w="8"></div></div></div>
+          <div class="prog-wrap" style="margin-bottom:0;"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#E1306C;border-radius:50%;display:inline-block;"></span>Instagram</span><span>5.2% engaj.</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#E1306C;" data-w="52"></div></div></div>
+          <div style="margin-top:16px;padding:14px;background:var(--g750);border-radius:10px;border:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;">Próximas Campanhas</div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;color:var(--text2);">📧 Newsletter Junho</span><span class="badge bo">Rascunho</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;color:var(--text2);">💬 WA Promoção Verão</span><span class="badge bb">Agendada</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;color:var(--text2);">📱 LinkedIn B2B Mai</span><span class="badge bg2">Ativa</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ CRM ══════════ -->
+  <div class="view" id="v-crm">
+    <div class="crm-grid">
+      <div class="panel">
+        <div class="ph"><div class="pt">Contactos</div><span class="pact">+ Novo</span></div>
+        <div style="padding:10px 12px;border-bottom:1px solid var(--border);"><div class="wa-si" style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 12px;"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="var(--text3)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input style="background:none;border:none;outline:none;color:var(--text1);font-size:13px;width:100%;" placeholder="Pesquisar contacto..."></div></div>
+        <div class="contact-list">
+          <div class="contact-item sel"><div class="c-av" style="background:linear-gradient(135deg,var(--orange),#b85a12)">TL</div><div><div class="c-name">Tecnilab Lda</div><div class="c-co">Lisboa · B2B Tech</div></div></div>
+          <div class="contact-item"><div class="c-av" style="background:linear-gradient(135deg,#3498DB,#1a6fa8)">GT</div><div><div class="c-name">Grupotec SA</div><div class="c-co">Porto · Indústria</div></div></div>
+          <div class="contact-item"><div class="c-av" style="background:linear-gradient(135deg,var(--success),#1a8f4a)">MG</div><div><div class="c-name">Medigest Lda</div><div class="c-co">Braga · Saúde</div></div></div>
+          <div class="contact-item"><div class="c-av" style="background:linear-gradient(135deg,#9B59B6,#6c3483)">IN</div><div><div class="c-name">Imob. Norte</div><div class="c-co">Porto · Imobiliário</div></div></div>
+          <div class="contact-item"><div class="c-av" style="background:linear-gradient(135deg,var(--warn),#c87d0b)">CN</div><div><div class="c-name">Construtora NW</div><div class="c-co">Aveiro · Construção</div></div></div>
+        </div>
+      </div>
+      <div class="crm-detail">
+        <div class="detail-hero">
+          <div class="dh-av" style="background:linear-gradient(135deg,var(--orange),#b85a12);font-size:22px;">TL</div>
+          <div>
+            <div class="dh-name">Tecnilab Lda</div>
+            <div class="dh-role">Tecnologia · Lisboa, Portugal · Founded 2018</div>
+            <div class="dh-badges"><span class="badge bo">Negociação</span><span class="badge bb">Score 98</span><span class="badge bg2">Hot Lead</span></div>
+          </div>
+          <div class="dh-stats">
+            <div class="dhs"><div class="dhs-val">€28.5k</div><div class="dhs-lbl">Valor negócio</div></div>
+            <div class="dhs"><div class="dhs-val">14</div><div class="dhs-lbl">Interações</div></div>
+            <div class="dhs"><div class="dhs-val">32d</div><div class="dhs-lbl">No pipeline</div></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="panel">
+            <div class="ph"><div class="pt">Informações</div></div>
+            <div style="padding:14px 18px;">
+              <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Contacto Principal</div><div style="font-size:13.5px;color:var(--text1);">Eng. Carlos Silva</div></div>
+              <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Email</div><div style="font-size:13.5px;color:var(--info);">carlos@tecnilab.pt</div></div>
+              <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Telefone</div><div style="font-size:13.5px;color:var(--text1);">+351 912 345 678</div></div>
+              <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Website</div><div style="font-size:13.5px;color:var(--info);">tecnilab.pt</div></div>
+              <div style="margin-bottom:0;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Funcionários</div><div style="font-size:13.5px;color:var(--text1);">45–100 pessoas</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="ph"><div class="pt">Ações Rápidas</div></div>
+            <div style="padding:14px;display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g750);border-radius:9px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='var(--orange-glow)'" onmouseout="this.style.background='var(--g750)'"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span style="font-size:13px;color:var(--text1);">Enviar Email</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g750);border-radius:9px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='rgba(37,211,102,.1)'" onmouseout="this.style.background='var(--g750)'"><svg width="15" height="15" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967c-.273-.099-.471-.148-.67.15c-.197.297-.767.966-.94 1.164c-.173.199-.347.223-.644.075c-.297-.15-1.255-.463-2.39-1.475c-.883-.788-1.48-1.761-1.653-2.059c-.173-.297-.018-.458.13-.606c.134-.133.298-.347.446-.52c.149-.174.198-.298.298-.497c.099-.198.05-.371-.025-.52c-.075-.149-.669-1.612-.916-2.207c-.242-.579-.487-.5-.669-.51c-.173-.008-.371-.01-.57-.01c-.198 0-.52.074-.792.372c-.272.297-1.04 1.016-1.04 2.479c0 1.462 1.065 2.875 1.213 3.074c.149.198 2.096 3.2 5.077 4.487c.709.306 1.262.489 1.694.625c.712.227 1.36.195 1.871.118c.571-.085 1.758-.719 2.006-1.413c.248-.694.248-1.289.173-1.413c-.074-.124-.272-.198-.57-.347z"/></svg><span style="font-size:13px;color:var(--text1);">WhatsApp</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g750);border-radius:9px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--g750)'"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--info)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span style="font-size:13px;color:var(--text1);">Agendar Reunião</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g750);border-radius:9px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--g750)'"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--warn)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="font-size:13px;color:var(--text1);">Criar Proposta</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="tl-title">Timeline de Atividades</div>
+          <div class="tl-item"><div class="tl-ico" style="background:rgba(232,115,26,.1);border-color:rgba(232,115,26,.3);"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="tl-body"><div class="tl-head"><span class="tl-action">Chamada de seguimento realizada</span><span class="tl-date">Hoje, 10:45</span></div><div class="tl-desc">Carlos confirmou interesse na proposta. Aguarda aprovação interna até 20/Mai.</div></div></div>
+          <div class="tl-item"><div class="tl-ico" style="background:rgba(52,152,219,.1);border-color:rgba(52,152,219,.3);"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--info)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg></div><div class="tl-body"><div class="tl-head"><span class="tl-action">Proposta comercial enviada</span><span class="tl-date">Ontem, 16:30</span></div><div class="tl-desc">Proposta detalhada enviada por email: Pacote Enterprise €28.500/ano.</div></div></div>
+          <div class="tl-item"><div class="tl-ico" style="background:rgba(46,204,113,.1);border-color:rgba(46,204,113,.3);"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--success)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="tl-body"><div class="tl-head"><span class="tl-action">Reunião de demonstração</span><span class="tl-date">12 Mai, 14:00</span></div><div class="tl-desc">Demo da plataforma realizada com equipa técnica. Feedback muito positivo.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PIPELINE ══════════ -->
+  <div class="view" id="v-pipeline">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Pipeline de Vendas</div><div style="font-size:12px;color:var(--text3);margin-top:2px;">58 negócios activos · €284.600 potencial total</div></div>
+      <div style="display:flex;gap:8px;"><div style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12.5px;color:var(--text2);cursor:pointer;">Filtrar ▾</div><div style="background:var(--orange);border-radius:8px;padding:8px 14px;font-size:12.5px;color:#fff;font-weight:600;cursor:pointer;">+ Novo Negócio</div></div>
+    </div>
+    <div class="kanban">
+      <div class="k-col"><div class="k-head"><span class="k-title" style="color:#3498DB;">🔍 Prospeção</span><span class="k-count" style="color:#3498DB;background:rgba(52,152,219,.15);">24</span></div><div class="k-cards">
+        <div class="k-card"><div class="k-card-company">TechFirm Lda</div><div class="k-card-val">€5.200</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:#3498DB">RC</div></div><span class="k-prob" style="color:#3498DB;">15%</span></div></div>
+        <div class="k-card"><div class="k-card-company">Startly SA</div><div class="k-card-val">€8.900</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:var(--orange)">JF</div></div><span class="k-prob" style="color:#3498DB;">10%</span></div></div>
+      </div></div>
+      <div class="k-col"><div class="k-head"><span class="k-title" style="color:#9B59B6;">📞 Contacto</span><span class="k-count" style="color:#9B59B6;background:rgba(155,89,182,.15);">18</span></div><div class="k-cards">
+        <div class="k-card"><div class="k-card-company">Medigest Lda</div><div class="k-card-val">€12.200</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:#9B59B6">MA</div></div><span class="k-prob" style="color:#9B59B6;">35%</span></div></div>
+        <div class="k-card"><div class="k-card-company">Construtora NW</div><div class="k-card-val">€8.800</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:#3498DB">RC</div></div><span class="k-prob" style="color:#9B59B6;">28%</span></div></div>
+      </div></div>
+      <div class="k-col"><div class="k-head"><span class="k-title" style="color:var(--orange);">📄 Proposta</span><span class="k-count" style="color:var(--orange);background:rgba(232,115,26,.15);">11</span></div><div class="k-cards">
+        <div class="k-card" style="border-color:rgba(232,115,26,.2);"><div class="k-card-company">Grupotec SA</div><div class="k-card-val" >€45.000</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:var(--orange)">JF</div><div class="k-uav" style="background:#9B59B6">JS</div></div><span class="k-prob" style="color:var(--orange);">55%</span></div></div>
+        <div class="k-card"><div class="k-card-company">SoluTech Lda</div><div class="k-card-val">€18.400</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:#3498DB">RC</div></div><span class="k-prob" style="color:var(--orange);">50%</span></div></div>
+      </div></div>
+      <div class="k-col"><div class="k-head"><span class="k-title" style="color:var(--warn);">🤝 Negociação</span><span class="k-count" style="color:var(--warn);background:rgba(243,156,18,.15);">7</span></div><div class="k-cards">
+        <div class="k-card" style="border-color:rgba(232,115,26,.3);border-width:1.5px;"><div class="k-card-company">Tecnilab Lda 🔥</div><div class="k-card-val">€28.500</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:var(--orange)">JF</div></div><span class="k-prob" style="color:var(--warn);">80%</span></div></div>
+        <div class="k-card"><div class="k-card-company">DataPrime</div><div class="k-card-val">€22.000</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:#9B59B6">MA</div></div><span class="k-prob" style="color:var(--warn);">75%</span></div></div>
+      </div></div>
+      <div class="k-col"><div class="k-head"><span class="k-title" style="color:var(--success);">✅ Fechado</span><span class="k-count" style="color:var(--success);background:rgba(46,204,113,.15);">4</span></div><div class="k-cards">
+        <div class="k-card" style="border-color:rgba(46,204,113,.2);"><div class="k-card-company">Imob. Norte 🎉</div><div class="k-card-val" style="color:var(--success);">€12.500</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:#9B59B6">MA</div></div><span class="k-prob" style="color:var(--success);">100%</span></div></div>
+        <div class="k-card" style="border-color:rgba(46,204,113,.2);"><div class="k-card-company">AgroTech Alentejo</div><div class="k-card-val" style="color:var(--success);">€9.200</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:#3498DB">RC</div></div><span class="k-prob" style="color:var(--success);">100%</span></div></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ══════════ WHATSAPP ══════════ -->
+  <div class="view" id="v-whatsapp">
+    <div class="wa-layout">
+      <div class="wa-sidebar">
+        <div class="ph" style="border-bottom:1px solid var(--border);"><div style="display:flex;align-items:center;gap:8px;"><svg width="16" height="16" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967c-.273-.099-.471-.148-.67.15c-.197.297-.767.966-.94 1.164c-.173.199-.347.223-.644.075c-.297-.15-1.255-.463-2.39-1.475c-.883-.788-1.48-1.761-1.653-2.059c-.173-.297-.018-.458.13-.606c.134-.133.298-.347.446-.52c.149-.174.198-.298.298-.497c.099-.198.05-.371-.025-.52c-.075-.149-.669-1.612-.916-2.207c-.242-.579-.487-.5-.669-.51c-.173-.008-.371-.01-.57-.01c-.198 0-.52.074-.792.372c-.272.297-1.04 1.016-1.04 2.479c0 1.462 1.065 2.875 1.213 3.074c.149.198 2.096 3.2 5.077 4.487c.709.306 1.262.489 1.694.625c.712.227 1.36.195 1.871.118c.571-.085 1.758-.719 2.006-1.413c.248-.694.248-1.289.173-1.413c-.074-.124-.272-.198-.57-.347z"/></svg><div class="pt">WhatsApp</div></div><span class="pact" style="font-size:11px;">+ Nova conversa</span></div>
+        <div style="padding:10px 12px;border-bottom:1px solid var(--border);"><div style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="var(--text3)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input style="background:none;border:none;outline:none;color:var(--text1);font-size:12.5px;width:100%;" placeholder="Pesquisar..."></div></div>
+        <div class="wa-chats">
+          <div class="wa-chat-item sel"><div class="wa-ci-av" style="background:var(--orange)">TL</div><div style="flex:1;min-width:0;"><div class="wa-ci-name">Tecnilab Lda</div><div class="wa-ci-msg">Gostávamos de marcar uma reunião...</div></div><div><div class="wa-ci-time">10:24</div><div class="wa-cnt2">3</div></div></div>
+          <div class="wa-chat-item"><div class="wa-ci-av" style="background:#3498DB">CM</div><div style="flex:1;min-width:0;"><div class="wa-ci-name">Construções Mário</div><div class="wa-ci-msg">Recebemos a proposta, obrigado!</div></div><div><div class="wa-ci-time">09:58</div><div class="wa-cnt2">1</div></div></div>
+          <div class="wa-chat-item"><div class="wa-ci-av" style="background:#9B59B6">IN</div><div style="flex:1;min-width:0;"><div class="wa-ci-name">Imob. Norte</div><div class="wa-ci-msg">Confirmado para sexta 10h</div></div><div><div class="wa-ci-time">Ontem</div></div></div>
+          <div class="wa-chat-item"><div class="wa-ci-av" style="background:var(--success)">GT</div><div style="flex:1;min-width:0;"><div class="wa-ci-name">Grupotec SA</div><div class="wa-ci-msg">Quando nos enviam a proposta final?</div></div><div><div class="wa-ci-time">Seg</div></div></div>
+        </div>
+      </div>
+      <div class="wa-main">
+        <div class="wa-top"><div class="wa-ci-av" style="background:var(--orange);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">TL</div><div><div class="wa-top-name">Tecnilab Lda</div><div class="wa-top-status">● Online</div></div><div style="margin-left:auto;display:flex;gap:8px;"><div class="ico-btn"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.27 19.79 19.79 0 0 1 1.61 .64 2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 7.91a16 16 0 0 0 6.08 6.08l1.08-1.08a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="ico-btn"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div></div></div>
+        <div class="wa-msgs">
+          <div class="msg-bubble msg-in">Olá! Somos a Tecnilab Lda. Gostaríamos de saber mais sobre as vossas soluções de CRM para empresas de tecnologia.<div class="msg-time">10:15</div></div>
+          <div class="msg-bubble msg-out">Bom dia! Claro, ficaríamos muito contentes em apresentar as nossas soluções. Pode me dizer qual o vosso principal desafio atual em gestão comercial?<div class="msg-time">10:18</div></div>
+          <div class="msg-bubble msg-in">O principal desafio é gerir o pipeline de vendas e automatizar follow-ups. Temos uma equipa de 8 comerciais.<div class="msg-time">10:20</div></div>
+          <div class="msg-bubble msg-out">Perfeito! O LXGest CRM é ideal para isso. Temos automação completa de follow-ups e pipeline visual. Posso agendar uma demonstração para a sua equipa?<div class="msg-time">10:22</div></div>
+          <div class="msg-bubble msg-in">Sim, gostaríamos de marcar uma reunião. Quando têm disponibilidade?<div class="msg-time">10:24</div></div>
+        </div>
+        <div class="wa-inp-area">
+          <div style="display:flex;align-items:center;gap:8px;"><div class="ico-btn" style="width:32px;height:32px;border-radius:50%;"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></div></div>
+          <input class="wa-inp" placeholder="Escreva uma mensagem...">
+          <div class="wa-send"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PROSPECTING ══════════ -->
+  <div class="view" id="v-prospecting">
+    <div class="prosp-layout">
+      <div>
+        <div class="panel" style="margin-bottom:14px;">
+          <div class="ph"><div><div class="pt">Prospecção Inteligente com IA</div><div class="ps">Encontre novos clientes · Portugal B2B</div></div><span class="pact">Exportar CSV ↗</span></div>
+          <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:flex-end;border-bottom:1px solid var(--border);">
+            <div><div class="form-label">Setor / Indústria</div><select class="filter-select" id="prospectSector"><option>Tecnologia</option><option>Construção</option><option>Saúde</option><option>Imobiliário</option><option>Indústria</option><option>Contabilidade</option><option>Restauração</option></select></div>
+            <div><div class="form-label">Localização</div><select class="filter-select" id="prospectLocation"><option>Portugal</option><option>Lisboa</option><option>Porto</option><option>Braga</option><option>Coimbra</option><option>Faro</option></select></div>
+            <div><div class="form-label">Fornecedor</div><select class="filter-select" id="prospectProvider"><option value="auto">Auto</option><option value="apollo">Apollo</option><option value="google">Google Places</option></select></div>
+            <div><button class="search-btn" onclick="searchProspectsReal()">🔍 Buscar leads reais</button></div>
+          </div>
+          <div style="padding:10px 20px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);line-height:1.5;">Com <b style="color:var(--text1);">APOLLO_API_KEY</b>/<b style="color:var(--text1);">GOOGLE_PLACES_API_KEY</b> e <b style="color:var(--text1);">HUNTER_API_KEY</b> no Render, esta pesquisa busca empresas reais, emails públicos e contactos disponíveis.</div>
+          <div style="padding:0;" id="prospectingResults">
+            <div class="prosp-card" style="border-radius:0;border:none;border-bottom:1px solid var(--border);">
+              <div class="pc-av" style="background:linear-gradient(135deg,var(--orange),#b85a12)">TC</div>
+              <div class="pc-info"><div class="pc-name">TechCore Solutions Lda</div><div class="pc-details">Tecnologia · Lisboa · 45 funcionários · techcore.pt</div><div class="pc-tags"><span class="badge bb">SaaS</span><span class="badge bo">B2B</span><span class="badge bg2">CRM User</span></div></div>
+              <div class="pc-score"><div class="pc-score-val" style="color:var(--orange);">97</div><div class="pc-score-lbl">Score IA</div><div class="pc-btn">+ Adicionar CRM</div></div>
+            </div>
+            <div class="prosp-card" style="border-radius:0;border:none;border-bottom:1px solid var(--border);">
+              <div class="pc-av" style="background:linear-gradient(135deg,#3498DB,#1a6fa8)">DP</div>
+              <div class="pc-info"><div class="pc-name">DataPrime Portugal SA</div><div class="pc-details">Dados & Analytics · Porto · 120 funcionários · dataprime.pt</div><div class="pc-tags"><span class="badge bp">Enterprise</span><span class="badge bb">Data</span></div></div>
+              <div class="pc-score"><div class="pc-score-val" style="color:var(--info);">91</div><div class="pc-score-lbl">Score IA</div><div class="pc-btn">+ Adicionar CRM</div></div>
+            </div>
+            <div class="prosp-card" style="border-radius:0;border:none;border-bottom:1px solid var(--border);">
+              <div class="pc-av" style="background:linear-gradient(135deg,#9B59B6,#6c3483)">NI</div>
+              <div class="pc-info"><div class="pc-name">NexoInova Lda</div><div class="pc-details">Software · Braga · 28 funcionários · nexoinova.pt</div><div class="pc-tags"><span class="badge bb">Startup</span><span class="badge bo">Growth</span></div></div>
+              <div class="pc-score"><div class="pc-score-val" style="color:#9B59B6;">84</div><div class="pc-score-lbl">Score IA</div><div class="pc-btn">+ Adicionar CRM</div></div>
+            </div>
+            <div class="prosp-card" style="border-radius:0;border:none;">
+              <div class="pc-av" style="background:linear-gradient(135deg,var(--success),#1a7a3a)">AS</div>
+              <div class="pc-info"><div class="pc-name">AgroSmart Portugal</div><div class="pc-details">AgriTech · Évora · 65 funcionários · agrosmart.pt</div><div class="pc-tags"><span class="badge bg2">AgriTech</span><span class="badge bb">B2B</span></div></div>
+              <div class="pc-score"><div class="pc-score-val" style="color:var(--success);">78</div><div class="pc-score-lbl">Score IA</div><div class="pc-btn">+ Adicionar CRM</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="panel">
+          <div class="ph"><div class="pt">Lead Scoring IA</div></div>
+          <div style="padding:16px 20px;">
+            <div style="text-align:center;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:14px;">
+              <div style="font-size:48px;font-weight:900;color:var(--orange);font-family:'Space Grotesk',sans-serif;">97</div>
+              <div style="font-size:12px;color:var(--text3);">Score médio · últimas pesquisas</div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Critérios IA</div>
+            <div class="prog-wrap"><div class="prog-lbl"><span>Fit de mercado</span><span>95%</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--orange);" data-w="95"></div></div></div>
+            <div class="prog-wrap"><div class="prog-lbl"><span>Intenção de compra</span><span>88%</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--info);" data-w="88"></div></div></div>
+            <div class="prog-wrap"><div class="prog-lbl"><span>Orçamento disponível</span><span>72%</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--success);" data-w="72"></div></div></div>
+            <div class="prog-wrap" style="margin-bottom:0;"><div class="prog-lbl"><span>Timing</span><span>91%</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--purple);" data-w="91"></div></div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div class="pt">Sequências Auto</div></div>
+          <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px;">
+            <div style="padding:10px 12px;background:var(--g750);border-radius:9px;border:1px solid var(--border);"><div style="font-size:13px;font-weight:600;color:var(--text1);margin-bottom:3px;">Email Cold Outreach #1</div><div style="font-size:11px;color:var(--text3);">Dia 1 · Taxa abertura: 52%</div></div>
+            <div style="padding:10px 12px;background:var(--g750);border-radius:9px;border:1px solid var(--border);"><div style="font-size:13px;font-weight:600;color:var(--text1);margin-bottom:3px;">WhatsApp Follow-up</div><div style="font-size:11px;color:var(--text3);">Dia 3 · Taxa resposta: 34%</div></div>
+            <div style="padding:10px 12px;background:var(--g750);border-radius:9px;border:1px solid var(--border);"><div style="font-size:13px;font-weight:600;color:var(--text1);margin-bottom:3px;">LinkedIn Connection</div><div style="font-size:11px;color:var(--text3);">Dia 7 · Aceite: 68%</div></div>
+            <div style="padding:10px 12px;background:rgba(232,115,26,.08);border-radius:9px;border:1px solid rgba(232,115,26,.25);"><div style="font-size:13px;font-weight:600;color:var(--orange);margin-bottom:3px;">Demo Agendada</div><div style="font-size:11px;color:var(--text3);">Dia 14 · Conversão: 22%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ CAMPAIGNS ══════════ -->
+  <div class="view" id="v-campaigns">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Campanhas de Marketing</div><div style="font-size:12px;color:var(--text3);">3 ativas · 2 em rascunho</div></div>
+      <div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;">+ Nova Campanha</div>
+    </div>
+    <div class="camp-grid">
+      <div class="camp-card"><div class="camp-banner" style="background:linear-gradient(135deg,var(--orange),#c45e12);"><span style="font-size:32px;opacity:.3;position:absolute;">📧</span></div><div class="camp-info"><div class="camp-name">Newsletter Maio 2025</div><div class="camp-type">Email Marketing · Enviada a 12 Mai</div><div class="camp-stats"><div class="cs"><div class="cs-val" style="color:var(--orange);">47%</div><div class="cs-lbl">Abertura</div></div><div class="cs"><div class="cs-val" style="color:var(--info);">12%</div><div class="cs-lbl">Cliques</div></div><div class="cs"><div class="cs-val" style="color:var(--success);">3.2%</div><div class="cs-lbl">Conversão</div></div></div><span class="badge bg2">Concluída</span></div></div>
+      <div class="camp-card"><div class="camp-banner" style="background:linear-gradient(135deg,#25D366,#128C7E);"><span style="font-size:32px;opacity:.3;position:absolute;">💬</span></div><div class="camp-info"><div class="camp-name">WA Promo Primavera</div><div class="camp-type">WhatsApp Business · Ativa</div><div class="camp-stats"><div class="cs"><div class="cs-val" style="color:#25D366;">94%</div><div class="cs-lbl">Entrega</div></div><div class="cs"><div class="cs-val" style="color:var(--info);">38%</div><div class="cs-lbl">Resposta</div></div><div class="cs"><div class="cs-val" style="color:var(--success);">8.1%</div><div class="cs-lbl">Conversão</div></div></div><span class="badge bg2">Ativa</span></div></div>
+      <div class="camp-card"><div class="camp-banner" style="background:linear-gradient(135deg,#0077B5,#005885);"><span style="font-size:32px;opacity:.3;position:absolute;">💼</span></div><div class="camp-info"><div class="camp-name">LinkedIn B2B Maio</div><div class="camp-type">Redes Sociais · Em curso</div><div class="camp-stats"><div class="cs"><div class="cs-val" style="color:#0077B5;">2.8k</div><div class="cs-lbl">Alcance</div></div><div class="cs"><div class="cs-val" style="color:var(--info);">8.4%</div><div class="cs-lbl">CTR</div></div><div class="cs"><div class="cs-val" style="color:var(--success);">42</div><div class="cs-lbl">Leads</div></div></div><span class="badge bb">Ativa</span></div></div>
+    </div>
+  </div>
+
+  <!-- ══════════ EMAIL MARKETING ══════════ -->
+  <div class="view" id="v-email">
+    <div class="email-layout">
+      <div class="email-builder">
+        <div class="eb-head">
+          <span style="font-size:14px;font-weight:700;">Editor de Newsletter</span>
+          <div style="margin-left:auto;display:flex;gap:8px;"><span class="badge bgr">Rascunho</span><div style="background:var(--orange);border-radius:7px;padding:6px 14px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;">Enviar Campanha ↗</div></div>
+        </div>
+        <div class="eb-preview">
+          <div class="email-preview-card">
+            <div class="ep-banner"><div style="position:absolute;inset:0;background:linear-gradient(135deg,#1A1D21,#2E333B);"></div><svg width="120" height="44" viewBox="0 0 320 110" fill="none" style="position:relative;z-index:1;"><path d="M 72 18 C 30 18 8 44 8 72 C 8 100 30 96 50 94" stroke="#9B9B9B" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M 64 36 C 38 36 24 52 24 72 C 24 86 34 92 46 92" stroke="#BBBFC6" stroke-width="7" stroke-linecap="round" fill="none"/><ellipse cx="76" cy="18" rx="10" ry="8" fill="#E8731A" transform="rotate(-20 76 18)"/><text x="92" y="82" font-family="sans-serif" font-weight="300" font-size="52" fill="#8A8E96">L</text><text x="122" y="82" font-family="sans-serif" font-weight="700" font-size="52" fill="#8A8E96">x</text><text x="158" y="82" font-family="sans-serif" font-weight="400" font-size="46" fill="#8A8E96">gest</text></svg></div>
+            <div class="ep-body">
+              <div class="ep-h1">Transforme as Suas Vendas em 2025</div>
+              <div class="ep-p">Descubra como as empresas portuguesas estão a usar o LXGest CRM para aumentar as suas receitas em até 40% e automatizar processos comerciais com Inteligência Artificial.</div>
+              <div class="ep-btn">Saber Mais →</div>
+            </div>
+            <div class="ep-footer">© 2025 LXGest · Lisboa, Portugal · <span style="color:#0077B5;cursor:pointer;">Cancelar subscrição</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="email-metrics">
+        <div class="em-card">
+          <div class="em-title">Métricas da Campanha</div>
+          <div class="em-stat"><span class="em-s-lbl">Lista de contactos</span><span class="em-s-val">1.847</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Taxa de abertura</span><span class="em-s-val" style="color:var(--orange);">47.3%</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Taxa de cliques</span><span class="em-s-val" style="color:var(--info);">12.1%</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Conversões</span><span class="em-s-val" style="color:var(--success);">58</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Cancelamentos</span><span class="em-s-val" style="color:var(--danger);">12</span></div>
+        </div>
+        <div class="em-card">
+          <div class="em-title">Segmentação</div>
+          <div class="prog-wrap"><div class="prog-lbl"><span>B2B Tech</span><span>38%</span></div><div class="prog-bar"><div class="prog-fill" style="width:38%;background:var(--orange);"></div></div></div>
+          <div class="prog-wrap"><div class="prog-lbl"><span>Indústria</span><span>24%</span></div><div class="prog-bar"><div class="prog-fill" style="width:24%;background:var(--info);"></div></div></div>
+          <div class="prog-wrap" style="margin-bottom:0;"><div class="prog-lbl"><span>Outros</span><span>38%</span></div><div class="prog-bar"><div class="prog-fill" style="width:38%;background:var(--g600);"></div></div></div>
+        </div>
+        <div class="em-card">
+          <div class="em-title">Automação Ativa</div>
+          <div class="em-stat"><span class="em-s-lbl">📧 Welcome email</span><span class="badge bg2">Ativo</span></div>
+          <div class="em-stat"><span class="em-s-lbl">🔄 Follow-up D+3</span><span class="badge bg2">Ativo</span></div>
+          <div class="em-stat"><span class="em-s-lbl">🎯 Nurturing D+7</span><span class="badge bo">Pausado</span></div>
+          <div class="em-stat"><span class="em-s-lbl">💎 Re-engagement</span><span class="badge bgr">Rascunho</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SOCIAL MEDIA ══════════ -->
+  <div class="view" id="v-social">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Gestão de Redes Sociais</div></div><div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;">+ Novo Post</div></div>
+    <div class="social-grid">
+      <div class="social-card"><div class="sc-head"><div class="sc-icon" style="background:#E1306C;"><svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div><div><div class="sc-name">Instagram</div><div class="sc-handle">@lxgest.oficial</div></div></div><div class="sc-metrics"><div class="scm"><div class="scm-val">4.2k</div><div class="scm-lbl">Seguidores</div></div><div class="scm"><div class="scm-val">5.2%</div><div class="scm-lbl">Engaj.</div></div><div class="scm"><div class="scm-val">18</div><div class="scm-lbl">Posts/mês</div></div></div></div>
+      <div class="social-card"><div class="sc-head"><div class="sc-icon" style="background:#0077B5;"><svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div><div><div class="sc-name">LinkedIn</div><div class="sc-handle">LXGest Portugal</div></div></div><div class="sc-metrics"><div class="scm"><div class="scm-val">2.8k</div><div class="scm-lbl">Seguidores</div></div><div class="scm"><div class="scm-val">8.4%</div><div class="scm-lbl">CTR</div></div><div class="scm"><div class="scm-val">12</div><div class="scm-lbl">Posts/mês</div></div></div></div>
+      <div class="social-card"><div class="sc-head"><div class="sc-icon" style="background:#1877F2;"><svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></div><div><div class="sc-name">Facebook</div><div class="sc-handle">LXGest Oficial</div></div></div><div class="sc-metrics"><div class="scm"><div class="scm-val">1.5k</div><div class="scm-lbl">Seguidores</div></div><div class="scm"><div class="scm-val">3.1%</div><div class="scm-lbl">Engaj.</div></div><div class="scm"><div class="scm-val">10</div><div class="scm-lbl">Posts/mês</div></div></div></div>
+      <div class="social-card"><div class="sc-head"><div class="sc-icon" style="background:#000;"><svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.36 6.36 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.15 8.15 0 0 0 4.77 1.52V6.76a4.85 4.85 0 0 1-1-.07z"/></svg></div><div><div class="sc-name">TikTok</div><div class="sc-handle">@lxgestpt</div></div></div><div class="sc-metrics"><div class="scm"><div class="scm-val">680</div><div class="scm-lbl">Seguidores</div></div><div class="scm"><div class="scm-val">9.7%</div><div class="scm-lbl">Engaj.</div></div><div class="scm"><div class="scm-val">8</div><div class="scm-lbl">Posts/mês</div></div></div></div>
+    </div>
+    <div class="post-queue">
+      <div class="ph"><div class="pt">Fila de Publicações</div><span class="pact">+ Agendar</span></div>
+      <div class="post-item"><div class="post-thumb" style="background:rgba(232,115,26,.12);">📊</div><div class="post-info"><div class="post-caption">5 Razões para Automatizar o seu CRM em 2025</div><div class="post-details">Amanhã, 09:00 · LinkedIn + Instagram</div></div><div class="post-nets"><div class="net-ico" style="background:#0077B5;">in</div><div class="net-ico" style="background:#E1306C;">📷</div></div><span class="badge bo">Agendado</span></div>
+      <div class="post-item"><div class="post-thumb" style="background:rgba(52,152,219,.12);">💡</div><div class="post-info"><div class="post-caption">Case Study: Tecnilab aumentou vendas 40%</div><div class="post-details">Sex, 11:00 · LinkedIn + Facebook</div></div><div class="post-nets"><div class="net-ico" style="background:#0077B5;">in</div><div class="net-ico" style="background:#1877F2;">f</div></div><span class="badge bb">Agendado</span></div>
+      <div class="post-item"><div class="post-thumb" style="background:rgba(46,204,113,.12);">🎯</div><div class="post-info"><div class="post-caption">Dica de Prospecção com IA · Vídeo</div><div class="post-details">Seg 18 Mai, 18:00 · Todas as redes</div></div><div class="post-nets"><div class="net-ico" style="background:#0077B5;">in</div><div class="net-ico" style="background:#E1306C;">📷</div><div class="net-ico" style="background:#000;">T</div></div><span class="badge bgr">Rascunho</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════ TASKS ══════════ -->
+  <div class="view" id="v-tasks">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Gestão de Tarefas</div><div style="font-size:12px;color:var(--text3);">Equipa LXGest · Maio 2025</div></div><div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;">+ Nova Tarefa</div></div>
+    <div class="tasks-grid">
+      <div class="tasks-col"><div class="tc-head"><span class="tc-title"><span class="tc-dot" style="background:#546070;"></span>A Fazer</span><span class="tc-count">4</span></div><div class="tc-cards">
+        <div class="tc-card"><div class="tc-card-title">Preparar relatório Q2</div><div class="tc-card-desc">Relatório completo de performance do segundo trimestre 2025.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Alta</span><div class="task-av" style="background:#9B59B6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">MA</div></div></div>
+        <div class="tc-card"><div class="tc-card-title">Follow-up Construções Mário</div><div class="tc-card-desc">Ligar para confirmar interesse na proposta enviada.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Alta</span><div class="task-av" style="background:#3498DB;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">RC</div></div></div>
+        <div class="tc-card"><div class="tc-card-title">Atualizar base de dados leads</div><div class="tc-card-desc">Limpar e organizar lista de leads do mês passado.</div><div class="tc-card-ft"><span class="tc-prio prio-mid">Média</span><div class="task-av" style="background:var(--orange);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">JF</div></div></div>
+      </div><div class="add-task"><button class="add-task-btn">+ Adicionar tarefa</button></div></div>
+      <div class="tasks-col"><div class="tc-head"><span class="tc-title"><span class="tc-dot" style="background:var(--orange);"></span>Em Progresso</span><span class="tc-count">3</span></div><div class="tc-cards">
+        <div class="tc-card" style="border-color:rgba(232,115,26,.2);"><div class="tc-card-title">Negociação Tecnilab 🔥</div><div class="tc-card-desc">Negociação final contrato anual €28.500. Deadline: 20 Mai.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Urgente</span><div class="task-av" style="background:var(--orange);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">JF</div></div></div>
+        <div class="tc-card"><div class="tc-card-title">Campanha Email Junho</div><div class="tc-card-desc">Criar conteúdo e templates para newsletter de Junho.</div><div class="tc-card-ft"><span class="tc-prio prio-mid">Média</span><div class="task-av" style="background:#9B59B6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">MA</div></div></div>
+        <div class="tc-card"><div class="tc-card-title">Proposta Grupotec SA</div><div class="tc-card-desc">Finalizar proposta Enterprise €45.000 com todos os detalhes.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Alta</span><div class="task-av" style="background:#3498DB;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">RC</div></div></div>
+      </div><div class="add-task"><button class="add-task-btn">+ Adicionar tarefa</button></div></div>
+      <div class="tasks-col"><div class="tc-head"><span class="tc-title"><span class="tc-dot" style="background:var(--success);"></span>Concluído</span><span class="tc-count">8</span></div><div class="tc-cards">
+        <div class="tc-card" style="opacity:.7;"><div class="tc-card-title" style="text-decoration:line-through;color:var(--text3);">Proposta Tecnilab</div><div class="tc-card-desc">✓ Enviada com sucesso em 13 Mai</div><div class="tc-card-ft"><span class="badge bg2">Feito</span><div class="task-av" style="background:var(--orange);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">JF</div></div></div>
+        <div class="tc-card" style="opacity:.7;"><div class="tc-card-title" style="text-decoration:line-through;color:var(--text3);">Importar leads Excel</div><div class="tc-card-desc">✓ 247 leads importados com sucesso</div><div class="tc-card-ft"><span class="badge bg2">Feito</span><div class="task-av" style="background:#3498DB;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">RC</div></div></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ══════════ CALENDAR ══════════ -->
+  <div class="view" id="v-calendar">
+    <div class="cal-layout">
+      <div class="cal-grid">
+        <div class="cal-head"><div class="cal-month">Maio 2025</div><div style="display:flex;align-items:center;gap:10px;"><div style="display:flex;gap:6px;"><span class="badge bo">5 eventos hoje</span></div><div class="cal-nav"><div class="cal-nav-btn">‹</div><div class="cal-nav-btn">›</div></div></div></div>
+        <div class="cal-days-head"><div class="cal-day-lbl">Seg</div><div class="cal-day-lbl">Ter</div><div class="cal-day-lbl">Qua</div><div class="cal-day-lbl">Qui</div><div class="cal-day-lbl">Sex</div><div class="cal-day-lbl">Sáb</div><div class="cal-day-lbl">Dom</div></div>
+        <div class="cal-days" id="cal-days"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="panel"><div class="ph"><div class="pt">Hoje · 14 Mai</div><span class="pact">+ Evento</span></div>
+          <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(232,115,26,.08);border-radius:9px;border-left:3px solid var(--orange);"><div style="flex-shrink:0;"><div style="font-size:13px;font-weight:700;color:var(--orange);">09:30</div><div style="font-size:11px;color:var(--text3);">60 min</div></div><div><div style="font-size:13px;font-weight:600;color:var(--text1);">Reunião Tecnilab</div><div style="font-size:11px;color:var(--text3);">Zoom · Carlos Silva</div></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(52,152,219,.08);border-radius:9px;border-left:3px solid var(--info);"><div style="flex-shrink:0;"><div style="font-size:13px;font-weight:700;color:var(--info);">15:00</div><div style="font-size:11px;color:var(--text3);">30 min</div></div><div><div style="font-size:13px;font-weight:600;color:var(--text1);">Team Stand-up</div><div style="font-size:11px;color:var(--text3);">Interno · Equipa comercial</div></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(139,92,246,.08);border-radius:9px;border-left:3px solid var(--purple);"><div style="flex-shrink:0;"><div style="font-size:13px;font-weight:700;color:var(--purple);">17:00</div><div style="font-size:11px;color:var(--text3);">45 min</div></div><div><div style="font-size:13px;font-weight:600;color:var(--text1);">Demo Grupotec</div><div style="font-size:11px;color:var(--text3);">Presencial · Porto</div></div></div>
+          </div>
+        </div>
+        <div class="panel"><div class="ph"><div class="pt">Próxima Semana</div></div>
+          <div style="padding:14px 18px;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span style="color:var(--text1);">Seg 19 · Follow-up Medigest</span><span class="badge bb">09:00</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span style="color:var(--text1);">Ter 20 · Proposta Final Tecnilab</span><span class="badge bo">14:30</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span style="color:var(--text1);">Qui 22 · Webinar Marketing IA</span><span class="badge bp">16:00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ ANALYTICS ══════════ -->
+  <div class="view" id="v-analytics">
+    <div class="metric-row">
+      <div class="metric-box"><div class="mb-val">€84.3k</div><div class="mb-lbl">Receita Mai 2025</div><div class="mb-chg up">↑ +12.4%</div></div>
+      <div class="metric-box"><div class="mb-val" style="color:var(--info);">247</div><div class="mb-lbl">Novos Leads</div><div class="mb-chg up">↑ +8.1%</div></div>
+      <div class="metric-box"><div class="mb-val" style="color:var(--success);">34.2%</div><div class="mb-lbl">Conversão</div><div class="mb-chg up">↑ +2.8pp</div></div>
+      <div class="metric-box"><div class="mb-val" style="color:var(--purple);">€1.140</div><div class="mb-lbl">Ticket Médio</div><div class="mb-chg up">↑ +5.3%</div></div>
+    </div>
+    <div class="analytics-grid">
+      <div class="panel"><div class="ph"><div class="pt">Receita por Mês</div></div><div class="chart-area"><div class="chart-wrap">
+        <svg class="chart-svg" viewBox="0 0 400 140" preserveAspectRatio="none">
+          <defs><linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8731A" stop-opacity=".2"/><stop offset="100%" stop-color="#E8731A" stop-opacity="0"/></linearGradient></defs>
+          <line x1="0" y1="20" x2="400" y2="20" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <line x1="0" y1="70" x2="400" y2="70" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <line x1="0" y1="120" x2="400" y2="120" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+          <path d="M0,120 L66,100 L133,88 L200,72 L266,58 L333,42 L400,35 L400,120 Z" fill="url(#bg2)"/>
+          <path d="M0,120 L66,100 L133,88 L200,72 L266,58 L333,42 L400,35" fill="none" stroke="var(--orange)" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div></div></div>
+      <div class="panel"><div class="ph"><div class="pt">Leads por Fonte</div></div>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:10px;">
+          <div class="prog-wrap"><div class="prog-lbl"><span>Prospecção IA</span><span>38%</span></div><div class="prog-bar"><div class="prog-fill" style="width:38%;background:var(--orange);"></div></div></div>
+          <div class="prog-wrap"><div class="prog-lbl"><span>LinkedIn</span><span>24%</span></div><div class="prog-bar"><div class="prog-fill" style="width:24%;background:#0077B5;"></div></div></div>
+          <div class="prog-wrap"><div class="prog-lbl"><span>WhatsApp</span><span>18%</span></div><div class="prog-bar"><div class="prog-fill" style="width:18%;background:#25D366;"></div></div></div>
+          <div class="prog-wrap"><div class="prog-lbl"><span>Email</span><span>12%</span></div><div class="prog-bar"><div class="prog-fill" style="width:12%;background:var(--info);"></div></div></div>
+          <div class="prog-wrap" style="margin-bottom:0;"><div class="prog-lbl"><span>Outros</span><span>8%</span></div><div class="prog-bar"><div class="prog-fill" style="width:8%;background:var(--g600);"></div></div></div>
+        </div>
+      </div>
+      <div class="panel"><div class="ph"><div class="pt">Performance por Comercial</div></div>
+        <div style="padding:14px 20px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:12px;"><div class="uav">JF</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">João Ferreira</div><div class="prog-bar" style="margin-top:4px;"><div class="prog-fill" style="width:94%;background:var(--orange);"></div></div></div><div style="font-size:14px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:var(--orange);">€42k</div></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div class="uav" style="background:linear-gradient(135deg,#3498DB,#1a6fa8);">RC</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Rui Costa</div><div class="prog-bar" style="margin-top:4px;"><div class="prog-fill" style="width:68%;background:#3498DB;"></div></div></div><div style="font-size:14px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:#3498DB;">€28k</div></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div class="uav" style="background:linear-gradient(135deg,#9B59B6,#6c3483);">MA</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Maria Alves</div><div class="prog-bar" style="margin-top:4px;"><div class="prog-fill" style="width:52%;background:#9B59B6;"></div></div></div><div style="font-size:14px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:#9B59B6;">€22k</div></div>
+        </div>
+      </div>
+      <div class="panel"><div class="ph"><div class="pt">NPS & Satisfação</div></div>
+        <div style="padding:20px;text-align:center;"><div style="font-size:56px;font-weight:900;color:var(--success);font-family:'Space Grotesk',sans-serif;">88</div><div style="font-size:12px;color:var(--text3);">Net Promoter Score</div><div style="margin-top:14px;display:flex;justify-content:center;gap:8px;"><div style="padding:6px 14px;background:rgba(46,204,113,.12);border-radius:20px;font-size:12px;color:var(--success);">62% Promotores</div><div style="padding:6px 14px;background:rgba(243,156,18,.12);border-radius:20px;font-size:12px;color:var(--warn);">24% Neutros</div><div style="padding:6px 14px;background:rgba(231,76,60,.12);border-radius:20px;font-size:12px;color:var(--danger);">14% Detratores</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ AI ASSISTANT ══════════ -->
+  <div class="view" id="v-ai">
+    <div class="ai-layout">
+      <div class="ai-sidebar">
+        <div class="ai-sb-head">🤖 LXGest IA</div>
+        <div class="ai-conv-list">
+          <div class="ai-conv-item sel"><div class="ai-conv-title">Insights de vendas</div><div class="ai-conv-preview">Análise pipeline Maio...</div></div>
+          <div class="ai-conv-item"><div class="ai-conv-title">Prospecção Lisboa Tech</div><div class="ai-conv-preview">Leads recomendados...</div></div>
+          <div class="ai-conv-item"><div class="ai-conv-title">Campanha Email Junho</div><div class="ai-conv-preview">Sugestões de conteúdo...</div></div>
+          <div class="ai-conv-item"><div class="ai-conv-title">Relatório Q1 2025</div><div class="ai-conv-preview">Resumo executivo...</div></div>
+        </div>
+        <div style="padding:12px;border-top:1px solid var(--border);"><div style="background:var(--orange);border-radius:8px;padding:9px;font-size:12.5px;font-weight:600;color:#fff;cursor:pointer;text-align:center;">+ Nova Conversa</div></div>
+      </div>
+      <div class="ai-chat">
+        <div class="ai-chat-msgs" id="aiChatMsgs">
+          <div class="ai-msg"><div class="ai-msg-av ai-av"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="ai-bubble ai">Olá João! Sou o Assistente IA do LXGest. Analisei os seus dados de hoje e tenho 3 insights importantes para partilhar. Posso começar?</div></div>
+          <div class="ai-msg user"><div class="ai-msg-av user-av">JF</div><div class="ai-bubble user">Sim, por favor! O que encontraste de importante?</div></div>
+          <div class="ai-msg"><div class="ai-msg-av ai-av"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="ai-bubble ai"><strong>1. 🔥 Oportunidade Urgente:</strong> A Tecnilab visitou o vosso site 3 vezes hoje. Score IA: 98/100. Sugestão: ligar agora.<br><br><strong>2. ⚠️ Risco de Perda:</strong> 5 leads no pipeline sem atividade há +7 dias representam €28.400 em risco. Recomendo automação de follow-up.<br><br><strong>3. 📈 Tendência Positiva:</strong> A taxa de conversão subiu 2.8pp este mês. O segmento B2B Tech está a responder 34% melhor às campanhas de email.</div></div>
+          <div class="ai-msg user"><div class="ai-msg-av user-av">JF</div><div class="ai-bubble user">Podes criar um email de follow-up automático para esses 5 leads?</div></div>
+          <div class="ai-msg"><div class="ai-msg-av ai-av"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="ai-bubble ai">Claro! Criando sequência de follow-up personalizada para os 5 leads inativos com base no seu histórico de conversação e setor de atividade... ✅ Sequência criada: Email D+0, WhatsApp D+2, LinkedIn D+5. Activar?</div></div>
+        </div>
+        <div class="ai-inp-row">
+          <textarea class="ai-inp" id="aiInput" rows="1" placeholder="Pergunta algo ao assistente IA..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMessage();}"></textarea>
+          <div class="ai-send-btn" onclick="sendAiMessage()"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ══════════ IMPORTADOR EXCEL / CSV ══════════ -->
+  <div class="view" id="v-importer">
+    <div class="enterprise-grid">
+      <div class="enterprise-card"><div class="ec-title">Registos importados</div><div class="ec-value" id="importCount">0</div><div class="ec-sub">nesta sessão</div></div>
+      <div class="enterprise-card"><div class="ec-title">Duplicados detetados</div><div class="ec-value">12</div><div class="ec-sub">bloqueados antes da entrada</div></div>
+      <div class="enterprise-card"><div class="ec-title">Qualidade dados</div><div class="ec-value">94%</div><div class="ec-sub">campos válidos</div></div>
+      <div class="enterprise-card"><div class="ec-title">Última importação</div><div class="ec-value" style="font-size:22px;">Hoje</div><div class="ec-sub">base_clientes_maio.csv</div></div>
+    </div>
+    <div class="module-shell">
+      <div class="module-panel"><div class="ph"><div><div class="pt">Importar Base de Clientes</div><div class="ps">Excel, CSV ou XLSX</div></div></div>
+        <div class="module-pad">
+          <label class="dropzone" for="importFile"><div class="drop-ico">📥</div><div class="drop-title">Clique para importar</div><div class="drop-sub">Suporta CSV. Para XLSX, ligar SheetJS no backend/produção.</div></label>
+          <input type="file" id="importFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleImportFile(event)">
+          <div style="height:14px"></div>
+          <div class="form-field"><div class="form-label">Origem da base</div><select class="form-inp"><option>Base atual LXGest</option><option>Campanha Facebook</option><option>LinkedIn</option><option>Feira / Evento</option></select></div>
+          <div class="form-field"><div class="form-label">Ação para duplicados</div><select class="form-inp"><option>Atualizar contacto existente</option><option>Ignorar duplicado</option><option>Criar nova oportunidade</option></select></div>
+          <button class="save-btn" onclick="simulateImport()">Validar e Importar</button>
+        </div>
+      </div>
+      <div class="module-panel"><div class="ph"><div><div class="pt">Mapeamento & Pré-visualização</div><div class="ps">Campos reconhecidos automaticamente</div></div><span class="badge bo">RGPD Ready</span></div>
+        <div class="mapping-row"><div class="map-left"><div class="map-icon">👤</div><div><div class="map-title">Nome</div><div class="map-meta">nome, name, cliente</div></div></div><span class="badge bg2">Mapeado</span></div>
+        <div class="mapping-row"><div class="map-left"><div class="map-icon">✉️</div><div><div class="map-title">Email</div><div class="map-meta">email, e-mail</div></div></div><span class="badge bg2">Mapeado</span></div>
+        <div class="mapping-row"><div class="map-left"><div class="map-icon">📞</div><div><div class="map-title">Telefone / WhatsApp</div><div class="map-meta">telemóvel, phone, mobile</div></div></div><span class="badge bg2">Mapeado</span></div>
+        <div class="mapping-row"><div class="map-left"><div class="map-icon">🏢</div><div><div class="map-title">Empresa</div><div class="map-meta">empresa, company, organização</div></div></div><span class="badge bg2">Mapeado</span></div>
+        <div style="overflow:auto;"><table class="data-table" id="importPreview"><thead><tr><th>Nome</th><th>Email</th><th>Empresa</th><th>Estado</th></tr></thead><tbody><tr><td>Ana Martins</td><td>ana@empresa.pt</td><td>Empresa Demo</td><td><span class="badge bg2">Novo</span></td></tr><tr><td>Rui Lopes</td><td>rui@cliente.pt</td><td>Cliente Atual</td><td><span class="badge bo">Atualizar</span></td></tr></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SEGMENTAÇÃO & BASE DE DADOS ══════════ -->
+  <div class="view" id="v-segments">
+    <div class="enterprise-grid">
+      <div class="enterprise-card"><div class="ec-title">Contactos totais</div><div class="ec-value">18.420</div><div class="ec-sub">base unificada</div></div>
+      <div class="enterprise-card"><div class="ec-title">Segmentos ativos</div><div class="ec-value">36</div><div class="ec-sub">dinâmicos e manuais</div></div>
+      <div class="enterprise-card"><div class="ec-title">Consentimento RGPD</div><div class="ec-value">91%</div><div class="ec-sub">marketing permitido</div></div>
+      <div class="enterprise-card"><div class="ec-title">Lead score médio</div><div class="ec-value">74</div><div class="ec-sub">IA comercial</div></div>
+    </div>
+    <div class="segment-builder">
+      <div class="module-panel"><div class="ph"><div><div class="pt">Construtor de Segmentos</div><div class="ps">Filtros inteligentes para campanhas</div></div><span class="pact">+ Segmento</span></div><div class="module-pad">
+        <div class="form-field"><div class="form-label">Nome do segmento</div><input class="form-inp" value="B2B Lisboa · Score Alto"></div>
+        <div class="condition-chip">📍 Distrito = Lisboa</div><div class="condition-chip">🏢 Tipo = B2B</div><div class="condition-chip">🔥 Score IA &gt; 80</div><div class="condition-chip">✅ RGPD = Consentido</div>
+        <div style="height:12px"></div><button class="save-btn" onclick="showToast('Segmento guardado com sucesso')">Guardar Segmento</button>
+      </div></div>
+      <div class="module-panel"><div class="ph"><div><div class="pt">Segmentos Recomendados por IA</div><div class="ps">Prontos para campanha</div></div></div>
+        <div class="segment-row"><div><div class="map-title">Clientes inativos +90 dias</div><div class="map-meta">1.248 contactos · Reativação WhatsApp</div></div><span class="badge bo">ROI alto</span></div>
+        <div class="segment-row"><div><div class="map-title">Prospects tecnologia Norte</div><div class="map-meta">842 leads · Sequência LinkedIn + Email</div></div><span class="badge bb">Novo</span></div>
+        <div class="segment-row"><div><div class="map-title">Oportunidades sem resposta</div><div class="map-meta">76 negócios · Follow-up automático</div></div><span class="badge br">Urgente</span></div>
+        <div class="segment-row"><div><div class="map-title">Clientes premium satisfeitos</div><div class="map-meta">312 clientes · Upsell recomendado</div></div><span class="badge bg2">NPS 88</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ AUTOMAÇÕES ══════════ -->
+  <div class="view" id="v-automations">
+    <div class="enterprise-grid"><div class="enterprise-card"><div class="ec-title">Workflows ativos</div><div class="ec-value">12</div><div class="ec-sub">a executar</div></div><div class="enterprise-card"><div class="ec-title">Ações/mês</div><div class="ec-value">4.8k</div><div class="ec-sub">emails, tarefas, WhatsApp</div></div><div class="enterprise-card"><div class="ec-title">Tempo poupado</div><div class="ec-value">126h</div><div class="ec-sub">estimado no mês</div></div><div class="enterprise-card"><div class="ec-title">Conversão assistida</div><div class="ec-value">31%</div><div class="ec-sub">via automações</div></div></div>
+    <div class="module-panel"><div class="ph"><div><div class="pt">Workflow Visual</div><div class="ps">Exemplo: lead abriu newsletter e visitou website</div></div><button class="small-action" onclick="showToast('Workflow ativado')">Ativar</button></div><div class="module-pad"><div class="workflow-canvas"><div class="workflow-node"><div class="node-type">Trigger</div><div class="node-title">Lead abre email 2 vezes</div><div class="node-meta">Fonte: Newsletter Maio · Score +10</div></div><div class="workflow-node"><div class="node-type">Condição</div><div class="node-title">Score IA superior a 80</div><div class="node-meta">Segmento B2B Portugal validado</div></div><div class="workflow-node"><div class="node-type">Ação</div><div class="node-title">Criar tarefa + WhatsApp</div><div class="node-meta">Atribuir ao comercial responsável em 5 min</div></div></div></div></div>
+    <div style="height:14px"></div><div class="module-panel"><div class="ph"><div><div class="pt">Automações Prontas</div><div class="ps">Modelos enterprise para vendas e marketing</div></div><span class="pact">+ Nova Automação</span></div>
+      <div class="workflow-row"><div><div class="map-title">Follow-up automático pós-reunião</div><div class="map-meta">Email D+0 · WhatsApp D+2 · Tarefa D+5</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      <div class="workflow-row"><div><div class="map-title">Reativação de clientes inativos</div><div class="map-meta">Segmentação + newsletter + alerta comercial</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      <div class="workflow-row"><div><div class="map-title">Movimento automático no pipeline</div><div class="map-meta">Resposta recebida → Negociação</div></div><label class="toggle"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+    </div>
+  </div>
+
+  <!-- ══════════ UTILIZADORES AVANÇADO ══════════ -->
+  <div class="view" id="v-users">
+    <div class="module-shell"><div class="module-panel"><div class="ph"><div><div class="pt">Criar Utilizador</div><div class="ps">Equipa, função e permissões</div></div></div><div class="module-pad">
+      <div class="form-field"><div class="form-label">Nome completo</div><input class="form-inp" id="newUserName2" placeholder="Ex: Ana Silva"></div><div class="form-field"><div class="form-label">Email</div><input class="form-inp" id="newUserEmail2" type="email" placeholder="utilizador@lxgest.com"></div><div class="form-field"><div class="form-label">Função</div><select class="form-inp" id="newUserRole2"><option>Administrador</option><option>Comercial</option><option>Marketing</option><option>Gestor</option><option>Operações</option></select></div><div class="form-field"><div class="form-label">Senha temporária</div><input class="form-inp" id="newUserPassword2" type="password" placeholder="Senha"></div><button class="save-btn" onclick="createUserAdvanced()">Criar Utilizador</button></div></div>
+      <div class="module-panel"><div class="ph"><div><div class="pt">Permissões Granulares</div><div class="ps">Perfis por módulo</div></div><span class="badge bo">Master ativo</span></div><div class="module-pad"><div class="permission-grid"><div class="permission-card"><div class="permission-title">Comercial</div><label class="toggle"><input checked type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label><div class="map-meta">CRM, Pipeline, WhatsApp</div></div><div class="permission-card"><div class="permission-title">Marketing</div><label class="toggle"><input checked type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label><div class="map-meta">Campanhas, Social, Email</div></div><div class="permission-card"><div class="permission-title">Operações</div><label class="toggle"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label><div class="map-meta">Tarefas, Calendário</div></div><div class="permission-card"><div class="permission-title">Admin</div><label class="toggle"><input checked type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label><div class="map-meta">Tudo + auditoria</div></div></div><div style="height:14px"></div><div class="users-list" id="usersListAdvanced"></div></div></div></div>
+  </div>
+
+  <!-- ══════════ INTEGRAÇÕES & API ══════════ -->
+  <div class="view" id="v-integrations">
+    <div class="enterprise-grid">
+      <div class="enterprise-card"><div class="ec-title">IA GPT</div><div class="ec-value" id="stOpenai">—</div><div class="ec-sub">OpenAI API</div></div>
+      <div class="enterprise-card"><div class="ec-title">WhatsApp</div><div class="ec-value" id="stWhatsapp">—</div><div class="ec-sub">Cloud API + Bot</div></div>
+      <div class="enterprise-card"><div class="ec-title">Prospecção</div><div class="ec-value" id="stProspecting">—</div><div class="ec-sub">Apollo/Google + Hunter</div></div>
+      <div class="enterprise-card"><div class="ec-title">Email</div><div class="ec-value" id="stEmail">—</div><div class="ec-sub">Resend/SMTP</div></div>
+    </div>
+    <div class="module-shell">
+      <div class="module-panel">
+        <div class="ph"><div><div class="pt">Status das Integrações Reais</div><div class="ps">Lê as variáveis de ambiente configuradas no Render</div></div><button class="small-action" onclick="loadIntegrationStatus()">Atualizar status</button></div>
+        <div id="integrationStatusList">
+          <div class="integration-row"><div class="map-left"><div class="map-icon">🤖</div><div><div class="map-title">OpenAI / GPT</div><div class="map-meta">Assistente IA, geração de emails, scoring e chatbot</div></div></div><span class="badge bgr">A verificar</span></div>
+          <div class="integration-row"><div class="map-left"><div class="map-icon">🟢</div><div><div class="map-title">WhatsApp Business Cloud API</div><div class="map-meta">Envio real, webhook e bot com GPT</div></div></div><span class="badge bgr">A verificar</span></div>
+          <div class="integration-row"><div class="map-left"><div class="map-icon">🔍</div><div><div class="map-title">Apollo / Google Places / Hunter</div><div class="map-meta">Busca leads por ramo, localidade e email público</div></div></div><span class="badge bgr">A verificar</span></div>
+          <div class="integration-row"><div class="map-left"><div class="map-icon">✉️</div><div><div class="map-title">Resend Email API</div><div class="map-meta">Envio de newsletters e emails transacionais</div></div></div><span class="badge bgr">A verificar</span></div>
+          <div class="integration-row"><div class="map-left"><div class="map-icon">📣</div><div><div class="map-title">Facebook / LinkedIn</div><div class="map-meta">Publicação direta em redes sociais</div></div></div><span class="badge bgr">A verificar</span></div>
+        </div>
+      </div>
+      <div class="module-panel">
+        <div class="ph"><div><div class="pt">Testes Rápidos</div><div class="ps">Confirme os módulos depois de colocar as chaves</div></div></div>
+        <div class="module-pad" style="display:flex;flex-direction:column;gap:10px;">
+          <button class="save-btn" onclick="testAI()">Testar GPT</button>
+          <button class="save-btn" onclick="testLeadSearch()">Testar busca de leads</button>
+          <button class="save-btn" onclick="showToast('Para testar WhatsApp real use /api/whatsapp/send com WHATSAPP_TOKEN configurado')">Ver instrução WhatsApp</button>
+          <button class="save-btn" onclick="showToast('Para testar email real use /api/email/send com RESEND_API_KEY configurada')">Ver instrução Email</button>
+          <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-top:8px;">As credenciais não ficam no HTML. Configure no Render: <b>OPENAI_API_KEY</b>, <b>WHATSAPP_TOKEN</b>, <b>APOLLO_API_KEY</b>, <b>HUNTER_API_KEY</b>, <b>RESEND_API_KEY</b>, <b>META_ACCESS_TOKEN</b> e <b>LINKEDIN_ACCESS_TOKEN</b>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ RELATÓRIOS EXECUTIVOS ══════════ -->
+  <div class="view" id="v-reports">
+    <div class="enterprise-grid"><div class="enterprise-card"><div class="ec-title">Relatórios gerados</div><div class="ec-value">48</div><div class="ec-sub">este trimestre</div></div><div class="enterprise-card"><div class="ec-title">Exportações</div><div class="ec-value">PDF</div><div class="ec-sub">Excel, CSV e PPT</div></div><div class="enterprise-card"><div class="ec-title">Envio automático</div><div class="ec-value">Seg</div><div class="ec-sub">09:00 para direção</div></div><div class="enterprise-card"><div class="ec-title">Auditoria</div><div class="ec-value">100%</div><div class="ec-sub">ações registadas</div></div></div>
+    <div class="module-panel"><div class="ph"><div><div class="pt">Relatórios & Auditoria</div><div class="ps">Exportação executiva e rastreabilidade</div></div><button class="small-action" onclick="showToast('Relatório executivo exportado')">Exportar PDF</button></div>
+      <div class="report-row"><div><div class="map-title">Relatório Comercial Mensal</div><div class="map-meta">Pipeline, previsões, comerciais e conversão</div></div><span class="badge bo">Direção</span></div>
+      <div class="report-row"><div><div class="map-title">Performance Marketing</div><div class="map-meta">Campanhas, email, social, WhatsApp e ROI</div></div><span class="badge bb">Marketing</span></div>
+      <div class="report-row"><div><div class="map-title">RGPD & Consentimentos</div><div class="map-meta">Consentimentos, opt-outs, origem dos dados</div></div><span class="badge bg2">Compliance</span></div>
+      <div class="audit-row"><div><div class="map-title">Log: Marco Anile criou utilizador</div><div class="map-meta">Hoje · 09:42 · IP interno</div></div><span class="badge bgr">Auditoria</span></div>
+      <div class="audit-row"><div><div class="map-title">Log: Campanha Newsletter Maio enviada</div><div class="map-meta">Ontem · 18:10 · 12.400 destinatários</div></div><span class="badge bgr">Auditoria</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════ SETTINGS ══════════ -->
+  <div class="view" id="v-settings">
+    <div class="settings-layout">
+      <div>
+        <div class="settings-nav-item active" style="font-size:13px;"><svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Perfil & Conta</div>
+        <div class="settings-nav-item" style="font-size:13px;"><svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Equipa</div>
+        <div class="settings-nav-item" style="font-size:13px;"><svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Integrações</div>
+        <div class="settings-nav-item" style="font-size:13px;"><svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Notificações</div>
+        <div class="settings-nav-item" style="font-size:13px;"><svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Segurança</div>
+        <div class="settings-nav-item" style="font-size:13px;"><svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Faturação</div>
+      </div>
+      <div class="settings-panel">
+        <div class="sp-section">
+          <div class="sp-section-title">Perfil da Empresa</div>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+            <div style="width:64px;height:64px;border-radius:12px;background:var(--g750);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;">🏢</div>
+            <div><div style="font-size:13.5px;font-weight:600;margin-bottom:4px;">LXGest Lda</div><div style="font-size:12px;color:var(--orange);cursor:pointer;">Alterar logo →</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-field"><div class="form-label">Nome da empresa</div><input class="form-inp" value="LXGest Lda"></div>
+            <div class="form-field"><div class="form-label">NIF</div><input class="form-inp" value="123456789"></div>
+            <div class="form-field"><div class="form-label">Website</div><input class="form-inp" value="https://lxgest.pt"></div>
+            <div class="form-field"><div class="form-label">Setor</div><input class="form-inp" value="Tecnologia & CRM"></div>
+          </div>
+        </div>
+        <div class="sp-section">
+          <div class="sp-section-title">Utilizadores & Permissões</div>
+          <div class="user-manager">
+            <div>
+              <div class="form-field"><div class="form-label">Nome completo</div><input class="form-inp" id="newUserName" placeholder="Ex: Ana Silva"></div>
+              <div class="form-field"><div class="form-label">Email</div><input class="form-inp" id="newUserEmail" type="email" placeholder="utilizador@lxgest.com"></div>
+              <div class="user-form-grid">
+                <div class="form-field"><div class="form-label">Função</div><select class="form-inp" id="newUserRole"><option>Administrador</option><option>Comercial</option><option>Marketing</option><option>Gestor</option><option>Operações</option></select></div>
+                <div class="form-field"><div class="form-label">Senha temporária</div><input class="form-inp" id="newUserPassword" type="password" placeholder="Senha"></div>
+              </div>
+              <button class="save-btn" type="button" onclick="createUser()">Criar Utilizador</button>
+              <div style="font-size:11.5px;color:var(--text3);margin-top:10px;line-height:1.5;">Os utilizadores criados ficam disponíveis para login neste protótipo e guardados no navegador.</div>
+            </div>
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div style="font-size:13px;font-weight:700;">Equipa LXGest</div><span class="badge bo" id="usersCount">0 ativos</span></div>
+              <div class="users-list" id="usersList"></div>
+            </div>
+          </div>
+        </div>
+        <div class="sp-section">
+          <div class="sp-section-title">Preferências do Sistema</div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-name">Notificações de Leads</div><div class="setting-desc">Receber alertas quando novos leads são criados</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-name">IA Insights Diários</div><div class="setting-desc">Resumo automático de IA todas as manhãs</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-name">WhatsApp Automático</div><div class="setting-desc">Follow-ups automáticos via WhatsApp Business</div></div><label class="toggle"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-name">Relatório Semanal</div><div class="setting-desc">Email com resumo de performance toda segunda-feira</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <button class="save-btn">Guardar Alterações</button>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /content -->
+</main>
+</div>
+
+
+<div class="toast" id="toast"></div>
+<div class="command-palette" id="commandPalette" onclick="if(event.target.id==='commandPalette')toggleCommand(false)">
+  <div class="command-box">
+    <input class="command-input" id="commandInput" placeholder="Pesquisar ação rápida... Ex: importar, automação, cliente" oninput="filterCommands()">
+    <div class="command-results" id="commandResults"></div>
+  </div>
+</div>
+
+<script>
+
+// ═══ LOGIN & USER MANAGEMENT ═══
+const MASTER_EMAIL = 'marco.anile@lxgest.com';
+const MASTER_PASSWORD = 'Mec090716';
+const USERS_KEY = 'lxgest_users_v1';
+const SESSION_KEY = 'lxgest_current_user_v1';
+
+function initials(name){
+  return (name || 'LX').split(' ').filter(Boolean).slice(0,2).map(p=>p[0]).join('').toUpperCase() || 'LX';
+}
+
+function getUsers(){
+  const stored = localStorage.getItem(USERS_KEY);
+  if(stored){
+    try { return JSON.parse(stored); } catch(e) { localStorage.removeItem(USERS_KEY); }
+  }
+  const base = [
+    {name:'Marco Anile', email:MASTER_EMAIL, password:MASTER_PASSWORD, role:'Administrador Master', active:true, master:true},
+    {name:'João Ferreira', email:'joao.ferreira@lxgest.com', password:'demo123', role:'Administrador', active:true},
+    {name:'Ana Silva', email:'ana.silva@lxgest.com', password:'demo123', role:'Marketing', active:true}
+  ];
+  localStorage.setItem(USERS_KEY, JSON.stringify(base));
+  return base;
+}
+
+function saveUsers(users){ localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+
+function applySession(user){
+  document.body.classList.remove('login-locked');
+  document.getElementById('currentAvatar').textContent = initials(user.name);
+  document.getElementById('currentUserName').textContent = user.name;
+  document.getElementById('currentUserRole').textContent = user.role + ' · LXGest';
+  renderUsers();
+  animateBars();
+  buildCalendar();
+}
+
+function loginUser(e){
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const user = getUsers().find(u => u.active && u.email.toLowerCase() === email && u.password === password);
+  const err = document.getElementById('loginError');
+  if(!user){ err.style.display='block'; return; }
+  err.style.display='none';
+  localStorage.setItem(SESSION_KEY, JSON.stringify({email:user.email, name:user.name, role:user.role}));
+  applySession(user);
+}
+
+function logoutUser(){
+  localStorage.removeItem(SESSION_KEY);
+  document.body.classList.add('login-locked');
+  document.getElementById('loginPassword').value='';
+  document.getElementById('loginEmail').focus();
+}
+
+function createUser(){
+  const name = document.getElementById('newUserName').value.trim();
+  const email = document.getElementById('newUserEmail').value.trim().toLowerCase();
+  const role = document.getElementById('newUserRole').value;
+  const password = document.getElementById('newUserPassword').value;
+  if(!name || !email || !password){ alert('Preencha nome, email e senha.'); return; }
+  const users = getUsers();
+  if(users.some(u=>u.email.toLowerCase()===email)){ alert('Já existe um utilizador com este email.'); return; }
+  users.push({name,email,password,role,active:true});
+  saveUsers(users);
+  document.getElementById('newUserName').value='';
+  document.getElementById('newUserEmail').value='';
+  document.getElementById('newUserPassword').value='';
+  renderUsers();
+}
+
+function toggleUser(email){
+  const current = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+  const users = getUsers();
+  const u = users.find(x=>x.email===email);
+  if(!u || u.master) return;
+  if(current.email === email){ alert('Não pode desativar o utilizador em sessão.'); return; }
+  u.active = !u.active;
+  saveUsers(users);
+  renderUsers();
+}
+
+function deleteUser(email){
+  const current = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+  let users = getUsers();
+  const u = users.find(x=>x.email===email);
+  if(!u || u.master) return;
+  if(current.email === email){ alert('Não pode apagar o utilizador em sessão.'); return; }
+  if(!confirm('Apagar este utilizador?')) return;
+  users = users.filter(x=>x.email!==email);
+  saveUsers(users);
+  renderUsers();
+}
+
+function renderUsers(){
+  const list = document.getElementById('usersList');
+  if(!list) return;
+  const users = getUsers();
+  document.getElementById('usersCount').textContent = users.filter(u=>u.active).length + ' ativos';
+  list.innerHTML = users.map(u=>`<div class="user-row">
+    <div class="user-row-av">${initials(u.name)}</div>
+    <div><div class="user-row-name">${u.name}${u.master?' · Master':''}</div><div class="user-row-meta">${u.email} · ${u.role} · ${u.active?'Ativo':'Inativo'}</div></div>
+    <div class="user-row-actions">${u.master?'<span class="badge bo">Master</span>':`<button class="small-action" onclick="toggleUser('${u.email}')">${u.active?'Desativar':'Ativar'}</button><button class="small-action danger" onclick="deleteUser('${u.email}')">Apagar</button>`}</div>
+  </div>`).join('');
+}
+
+function bootAuth(){
+  getUsers();
+  const session = localStorage.getItem(SESSION_KEY);
+  if(session){
+    try{
+      const s = JSON.parse(session);
+      const u = getUsers().find(x=>x.active && x.email===s.email);
+      if(u){ applySession(u); return; }
+    }catch(e){}
+  }
+  document.body.classList.add('login-locked');
+  setTimeout(()=>document.getElementById('loginEmail')?.focus(),100);
+}
+
+// ═══ NAVIGATION ═══
+const pageNames = {
+  dashboard:['Dashboard','— Visão executiva em tempo real'],
+  crm:['CRM & Clientes','— Gestão de contactos e empresas'],
+  pipeline:['Pipeline de Vendas','— Funil Kanban interativo'],
+  campaigns:['Campanhas','— Marketing multicanal'],
+  email:['Email Marketing','— Newsletters e automação'],
+  whatsapp:['WhatsApp Business','— Mensagens e campanhas'],
+  social:['Redes Sociais','— Publicações e agendamento'],
+  prospecting:['Prospecção IA','— Encontrar novos clientes'],
+  segments:['Segmentação','— Base de dados, listas e RGPD'],
+  automations:['Automações','— Workflows inteligentes multicanal'],
+  importer:['Importador','— Excel, CSV, validação e duplicados'],
+  users:['Utilizadores','— Equipas e permissões avançadas'],
+  tasks:['Tarefas','— Gestão de equipa'],
+  calendar:['Calendário','— Reuniões e eventos'],
+  analytics:['Analytics','— Relatórios avançados'],
+  ai:['Assistente IA','— Inteligência artificial'],
+  integrations:['Integrações','— APIs e conectores externos'],
+  reports:['Relatórios','— Exportações executivas e auditoria'],
+  settings:['Configurações','— Sistema e integrações']
+};
+
+function go(id, el) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const v = document.getElementById('v-'+id);
+  if(v) v.classList.add('active');
+  if(el) el.classList.add('active');
+  const p = pageNames[id];
+  if(p){document.getElementById('pt').textContent=p[0];document.getElementById('ps').textContent=p[1];}
+  animateBars();
+}
+
+// ═══ ANIMATE BARS ═══
+function animateBars() {
+  setTimeout(()=>{
+    document.querySelectorAll('.bar-fill[data-w], .prog-fill[data-w]').forEach(b=>{
+      const w = b.getAttribute('data-w');
+      b.style.transition='width 1s cubic-bezier(.4,0,.2,1)';
+      b.style.width=w+'%';
+    });
+  },100);
+}
+
+// ═══ CALENDAR ═══
+function buildCalendar() {
+  const container = document.getElementById('cal-days');
+  if(!container) return;
+  container.innerHTML='';
+  const today = 14;
+  const days = [
+    {n:'',m:true},{n:'',m:true},{n:'',m:true},{n:1},{n:2},{n:3},{n:4},
+    {n:5},{n:6},{n:7},{n:8},{n:9},{n:10},{n:11},
+    {n:12},{n:13},{n:14,t:true},{n:15},{n:16},{n:17},{n:18},
+    {n:19},{n:20},{n:21},{n:22},{n:23},{n:24},{n:25},
+    {n:26},{n:27},{n:28},{n:29},{n:30},{n:31},{n:'',m:true}
+  ];
+  const events = {
+    14:[{c:'ev-orange',t:'Tecnilab 09:30'},{c:'ev-blue',t:'Stand-up 15:00'},{c:'ev-purple',t:'Demo 17:00'}],
+    15:[{c:'ev-blue',t:'Relatório Q2'}],
+    19:[{c:'ev-green',t:'Medigest call'}],
+    20:[{c:'ev-orange',t:'Proposta Tecnilab'}],
+    22:[{c:'ev-purple',t:'Webinar IA 16:00'}],
+    27:[{c:'ev-blue',t:'Reunião equipa'}]
+  };
+  days.forEach(d=>{
+    const div = document.createElement('div');
+    div.className='cal-day'+(d.t?' today':'')+(d.m?' other-month':'');
+    div.innerHTML='<div class="cal-day-num">'+(d.n||'')+'</div>';
+    if(d.n && events[d.n]){
+      events[d.n].forEach(e=>{
+        div.innerHTML+='<div class="cal-event '+e.c+'">'+e.t+'</div>';
+      });
+    }
+    container.appendChild(div);
+  });
+}
+
+
+
+// ═══ ENTERPRISE FRONT-END AUTOMATIONS ═══
+function showToast(msg){
+  const t=document.getElementById('toast'); if(!t) return;
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+function simulateImport(){
+  const n=document.querySelectorAll('#importPreview tbody tr').length || 128;
+  document.getElementById('importCount').textContent=n;
+  showToast(n+' registos validados e prontos para CRM');
+}
+
+function handleImportFile(e){
+  const file=e.target.files[0]; if(!file) return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='csv'){
+    const reader=new FileReader();
+    reader.onload=function(){
+      const rows=reader.result.split(/\r?\n/).filter(Boolean).slice(0,6).map(r=>r.split(/[;,]/));
+      const body=rows.slice(1).map((r,i)=>`<tr><td>${r[0]||'Contacto '+(i+1)}</td><td>${r[1]||'email@empresa.pt'}</td><td>${r[2]||'Empresa'}</td><td><span class="badge bg2">Novo</span></td></tr>`).join('');
+      const tbody=document.querySelector('#importPreview tbody'); if(tbody) tbody.innerHTML=body || tbody.innerHTML;
+      document.getElementById('importCount').textContent=Math.max(rows.length-1,0);
+      showToast('CSV carregado: '+file.name);
+    };
+    reader.readAsText(file);
+  } else {
+    showToast('Ficheiro '+ext.toUpperCase()+' selecionado. Em produção, processar via backend/SheetJS.');
+  }
+}
+
+function createUserAdvanced(){
+  const a=['Name','Email','Role','Password'];
+  document.getElementById('newUserName').value=document.getElementById('newUserName2').value;
+  document.getElementById('newUserEmail').value=document.getElementById('newUserEmail2').value;
+  document.getElementById('newUserRole').value=document.getElementById('newUserRole2').value;
+  document.getElementById('newUserPassword').value=document.getElementById('newUserPassword2').value;
+  createUser();
+  ['newUserName2','newUserEmail2','newUserPassword2'].forEach(id=>document.getElementById(id).value='');
+  renderUsersAdvanced(); showToast('Utilizador criado com permissões básicas');
+}
+
+const commands=[
+  ['Importar Excel/CSV','importer','Carregar base de clientes'],['Criar automação','automations','Workflow multicanal'],['Novo segmento','segments','Listas e RGPD'],['Criar utilizador','users','Equipa e permissões'],['Integrações API','integrations','WhatsApp, Meta, Google'],['Relatório executivo','reports','PDF, Excel e auditoria'],['Abrir CRM','crm','Clientes e contactos'],['Campanhas','campaigns','Marketing Hub']
+];
+function toggleCommand(show=true){
+  const p=document.getElementById('commandPalette'); if(!p) return;
+  p.classList.toggle('show',show); if(show){renderCommands(commands); setTimeout(()=>document.getElementById('commandInput').focus(),50);}
+}
+function renderCommands(list){
+  const box=document.getElementById('commandResults'); if(!box) return;
+  box.innerHTML=list.map(c=>`<div class="command-item" onclick="go('${c[1]}');toggleCommand(false)"><div class="map-icon">⌘</div><div><div class="map-title">${c[0]}</div><div class="map-meta">${c[2]}</div></div></div>`).join('');
+}
+function filterCommands(){
+  const q=document.getElementById('commandInput').value.toLowerCase();
+  renderCommands(commands.filter(c=>(c[0]+c[2]).toLowerCase().includes(q)));
+}
+function renderUsersAdvanced(){
+  const list=document.getElementById('usersListAdvanced'); if(!list) return;
+  const users=getUsers();
+  list.innerHTML=users.map(u=>`<div class="user-row"><div class="user-row-av">${initials(u.name)}</div><div><div class="user-row-name">${u.name}${u.master?' · Master':''}</div><div class="user-row-meta">${u.email} · ${u.role} · ${u.active?'Ativo':'Inativo'}</div></div><div class="user-row-actions">${u.master?'<span class="badge bo">Master</span>':'<button class="small-action" onclick="toggleUser(\''+u.email+'\');renderUsersAdvanced()">'+(u.active?'Desativar':'Ativar')+'</button>'}</div></div>`).join('');
+}
+const oldRenderUsers=renderUsers;
+renderUsers=function(){ oldRenderUsers(); renderUsersAdvanced(); };
+
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); toggleCommand(true); }
+  if(e.key==='Escape') toggleCommand(false);
+});
+
+// ═══ INIT ═══
+window.addEventListener('DOMContentLoaded',()=>{
+  bootAuth();
+});
+
+// Re-animate when switching tabs
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>setTimeout(animateBars,150));
+});
+</script>
+
+<script>
+// ═══ BACKEND API BRIDGE ═══
+// When deployed on Render, this overrides the local demo auth with the real Express/PostgreSQL API.
+const API_BASE = window.location.origin + '/api';
+const TOKEN_KEY = 'lxgest_api_token_v1';
+
+async function apiFetch(path, options = {}) {
+  const token = localStorage.getItem(TOKEN_KEY);
+  const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+  if (token) headers.Authorization = 'Bearer ' + token;
+  if (token === 'demo-mode') {
+    if (path === '/integrations/status') return { openai:false, whatsapp:false, email:false, prospecting:false, social:false, note:'Modo protótipo local. Publique no Render para APIs reais.' };
+    if (path === '/users') return { users: getUsers ? getUsers() : [] };
+  }
+  const res = await fetch(API_BASE + path, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Erro API');
+  return data;
+}
+
+window.loginUser = async function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+
+  const MASTER_EMAIL = 'marco.anile@lxgest.com';
+  const MASTER_PASSWORD = 'Mec090716';
+
+  function enterPrototypeMode(message) {
+    const demoUser = {
+      id: 'demo-master',
+      name: 'Marco Anile',
+      email: MASTER_EMAIL,
+      role: 'Administrador Master',
+      active: true,
+      is_master: true,
+      master: true
+    };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(demoUser));
+    localStorage.setItem(TOKEN_KEY, 'demo-mode');
+    err.style.display = 'none';
+    applySession(demoUser);
+    showToast(message || 'Modo protótipo ativo.');
+  }
+
+  try {
+    const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    localStorage.setItem(TOKEN_KEY, data.token);
+    localStorage.setItem(SESSION_KEY, JSON.stringify(data.user));
+    err.style.display = 'none';
+    applySession(data.user);
+    showToast('Sessão iniciada com backend PostgreSQL');
+  } catch (ex) {
+    // Fallback para testar o HTML localmente sem backend/API.
+    // No Render, se o backend responder com credenciais inválidas, não usa fallback.
+    const isLocalPrototype =
+      location.protocol === 'file:' ||
+      location.hostname === 'localhost' ||
+      location.hostname === '127.0.0.1' ||
+      location.hostname === '';
+
+    const isNetworkFailure =
+      ex.name === 'TypeError' ||
+      String(ex.message || '').includes('Failed to fetch') ||
+      String(ex.message || '').includes('URL scheme') ||
+      String(ex.message || '').includes('NetworkError');
+
+    if (email === MASTER_EMAIL && password === MASTER_PASSWORD && (isLocalPrototype || isNetworkFailure)) {
+      enterPrototypeMode('Backend indisponível: entrou em modo protótipo local.');
+      return;
+    }
+
+    err.textContent = ex.message || 'Email ou senha inválidos.';
+    err.style.display = 'block';
+  }
+};
+
+window.logoutUser = function() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(SESSION_KEY);
+  document.body.classList.add('login-locked');
+  document.getElementById('loginPassword').value='';
+  document.getElementById('loginEmail').focus();
+};
+
+window.getUsers = function(){ return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); };
+window.saveUsers = function(users){ localStorage.setItem(USERS_KEY, JSON.stringify(users)); };
+
+window.refreshUsersFromApi = async function() {
+  try {
+    const data = await apiFetch('/users');
+    const users = data.users.map(u => ({...u, master: u.is_master}));
+    saveUsers(users);
+    renderUsers();
+  } catch (ex) { console.warn(ex.message); }
+};
+
+window.createUser = async function(){
+  const name = document.getElementById('newUserName').value.trim();
+  const email = document.getElementById('newUserEmail').value.trim().toLowerCase();
+  const role = document.getElementById('newUserRole').value;
+  const password = document.getElementById('newUserPassword').value;
+  if(!name || !email || !password){ alert('Preencha nome, email e senha.'); return; }
+  try {
+    await apiFetch('/users', { method:'POST', body: JSON.stringify({ name, email, role, password }) });
+    ['newUserName','newUserEmail','newUserPassword'].forEach(id=>document.getElementById(id).value='');
+    await refreshUsersFromApi();
+    showToast('Utilizador criado na base de dados');
+  } catch (ex) { alert(ex.message); }
+};
+
+window.toggleUser = async function(email){
+  const users = getUsers();
+  const u = users.find(x=>x.email===email);
+  if(!u || u.master) return;
+  try {
+    await apiFetch('/users/' + u.id, { method:'PATCH', body: JSON.stringify({ active: !u.active }) });
+    await refreshUsersFromApi();
+    showToast('Estado do utilizador atualizado');
+  } catch(ex) { alert(ex.message); }
+};
+
+window.deleteUser = async function(email){
+  const users = getUsers();
+  const u = users.find(x=>x.email===email);
+  if(!u || u.master) return;
+  if(!confirm('Apagar este utilizador?')) return;
+  try {
+    await apiFetch('/users/' + u.id, { method:'DELETE' });
+    await refreshUsersFromApi();
+    showToast('Utilizador apagado');
+  } catch(ex) { alert(ex.message); }
+};
+
+window.bootAuth = async function(){
+  const token = localStorage.getItem(TOKEN_KEY);
+  if(token){
+    try{
+      const data = await apiFetch('/auth/me');
+      localStorage.setItem(SESSION_KEY, JSON.stringify(data.user));
+      applySession(data.user);
+      await refreshUsersFromApi();
+      return;
+    }catch(e){ localStorage.removeItem(TOKEN_KEY); }
+  }
+  document.body.classList.add('login-locked');
+  setTimeout(()=>document.getElementById('loginEmail')?.focus(),100);
+};
+
+
+
+window.sendAiMessage = async function(){
+  const input = document.getElementById('aiInput');
+  const box = document.getElementById('aiChatMsgs');
+  if(!input || !box) return;
+  const message = input.value.trim();
+  if(!message) return;
+  input.value = '';
+  const safe = message.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  box.insertAdjacentHTML('beforeend', `<div class="ai-msg user"><div class="ai-msg-av user-av">EU</div><div class="ai-bubble user">${safe}</div></div>`);
+  const loadingId = 'ai-loading-' + Date.now();
+  box.insertAdjacentHTML('beforeend', `<div class="ai-msg" id="${loadingId}"><div class="ai-msg-av ai-av">GPT</div><div class="ai-bubble ai">A pensar com GPT...</div></div>`);
+  box.scrollTop = box.scrollHeight;
+  try{
+    const data = await apiFetch('/ai/chat', { method:'POST', body: JSON.stringify({ message, mode:'assistant' }) });
+    const answer = (data.answer || '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(/\n/g,'<br>');
+    document.getElementById(loadingId).outerHTML = `<div class="ai-msg"><div class="ai-msg-av ai-av">GPT</div><div class="ai-bubble ai">${answer}</div></div>`;
+  }catch(ex){
+    document.getElementById(loadingId).outerHTML = `<div class="ai-msg"><div class="ai-msg-av ai-av">GPT</div><div class="ai-bubble ai">Erro IA: ${ex.message}. Confirme a variável OPENAI_API_KEY no Render.</div></div>`;
+  }
+  box.scrollTop = box.scrollHeight;
+};
+
+window.generateAiContent = async function(type, prompt){
+  const data = await apiFetch('/ai/generate', { method:'POST', body: JSON.stringify({ type, prompt }) });
+  return data.content;
+};
+
+
+window.renderProspectLead = function(lead){
+  const name = lead.name || lead.company || 'Lead sem nome';
+  const initials = name.split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();
+  const detail = [lead.industry, lead.address || lead.location, lead.phone, lead.website || lead.domain].filter(Boolean).join(' · ');
+  const email = lead.email ? `<span class="badge bg2">${lead.email}</span>` : '<span class="badge bgr">Email não encontrado</span>';
+  const provider = lead.provider ? `<span class="badge bb">${lead.provider}</span>` : '';
+  const score = lead.score || (lead.email ? 86 : 72);
+  return `<div class="prosp-card" style="border-radius:0;border:none;border-bottom:1px solid var(--border);">
+    <div class="pc-av" style="background:linear-gradient(135deg,var(--orange),#b85a12)">${initials}</div>
+    <div class="pc-info"><div class="pc-name">${name}</div><div class="pc-details">${detail || 'Portugal · dados disponíveis pelo fornecedor'}</div><div class="pc-tags">${email}${provider}</div></div>
+    <div class="pc-score"><div class="pc-score-val" style="color:var(--orange);">${score}</div><div class="pc-score-lbl">Score IA</div><div class="pc-btn">+ CRM</div></div>
+  </div>`;
+};
+
+window.searchProspectsReal = async function(){
+  const sector = document.getElementById('prospectSector')?.value || 'Tecnologia';
+  const location = document.getElementById('prospectLocation')?.value || 'Portugal';
+  const provider = document.getElementById('prospectProvider')?.value || 'auto';
+  const target = document.getElementById('prospectingResults');
+  if(!target) return;
+  target.innerHTML = '<div style="padding:18px 20px;color:var(--text3);">A buscar leads reais e enriquecer contactos...</div>';
+  try{
+    const data = await apiFetch('/prospecting/search', { method:'POST', body: JSON.stringify({ sector, location, provider, limit: 8, enrich: true, save: true }) });
+    const leads = data.leads || [];
+    if(!leads.length) target.innerHTML = '<div style="padding:18px 20px;color:var(--text3);">Nenhum lead encontrado. Verifique as chaves Apollo/Google Places/Hunter.</div>';
+    else target.innerHTML = leads.map(renderProspectLead).join('');
+    showToast(`${leads.length} leads encontrados${data.saved ? ' e guardados no CRM' : ''}`);
+  }catch(ex){
+    target.innerHTML = `<div style="padding:18px 20px;color:#ffb4ac;line-height:1.5;">Erro na prospeção: ${ex.message}<br>Configure APOLLO_API_KEY ou GOOGLE_PLACES_API_KEY e opcionalmente HUNTER_API_KEY no Render.</div>`;
+  }
+};
+
+window.loadIntegrationStatus = async function(){
+  const list = document.getElementById('integrationStatusList');
+  try{
+    const data = await apiFetch('/integrations/status');
+    const st = data.integrations || {};
+    const ok = v => v ? '<span class="badge bg2">Configurado</span>' : '<span class="badge br">Falta chave</span>';
+    document.getElementById('stOpenai').textContent = st.openai ? 'OK' : 'OFF';
+    document.getElementById('stWhatsapp').textContent = st.whatsapp ? 'OK' : 'OFF';
+    document.getElementById('stProspecting').textContent = (st.apollo || st.googlePlaces) ? 'OK' : 'OFF';
+    document.getElementById('stEmail').textContent = st.resend ? 'OK' : 'OFF';
+    if(list) list.innerHTML = `
+      <div class="integration-row"><div class="map-left"><div class="map-icon">🤖</div><div><div class="map-title">OpenAI / GPT</div><div class="map-meta">Assistente IA, geração de emails, scoring e chatbot</div></div></div>${ok(st.openai)}</div>
+      <div class="integration-row"><div class="map-left"><div class="map-icon">🟢</div><div><div class="map-title">WhatsApp Business Cloud API</div><div class="map-meta">WHATSAPP_TOKEN + WHATSAPP_PHONE_NUMBER_ID</div></div></div>${ok(st.whatsapp)}</div>
+      <div class="integration-row"><div class="map-left"><div class="map-icon">🔍</div><div><div class="map-title">Apollo / Google Places</div><div class="map-meta">Busca empresas reais por setor e localização</div></div></div>${ok(st.apollo || st.googlePlaces)}</div>
+      <div class="integration-row"><div class="map-left"><div class="map-icon">📧</div><div><div class="map-title">Hunter Email Enrichment</div><div class="map-meta">Enriquecimento de emails públicos por domínio</div></div></div>${ok(st.hunter)}</div>
+      <div class="integration-row"><div class="map-left"><div class="map-icon">✉️</div><div><div class="map-title">Resend Email API</div><div class="map-meta">Envio real de newsletters e emails</div></div></div>${ok(st.resend)}</div>
+      <div class="integration-row"><div class="map-left"><div class="map-icon">📣</div><div><div class="map-title">Facebook / LinkedIn</div><div class="map-meta">Publicação social direta</div></div></div>${ok(st.meta || st.linkedin)}</div>`;
+    showToast('Status das integrações atualizado');
+  }catch(ex){ showToast('Erro ao verificar integrações: ' + ex.message); }
+};
+
+window.testAI = async function(){
+  try{ const data = await apiFetch('/ai/chat', { method:'POST', body: JSON.stringify({ message:'Confirma que a IA da LXGest está operacional em uma frase.', mode:'assistant' }) }); showToast('GPT OK: ' + (data.answer || '').slice(0,80)); }
+  catch(ex){ showToast('GPT não configurado: ' + ex.message); }
+};
+
+window.testLeadSearch = function(){
+  go('prospecting', document.querySelector('.nav-item[onclick*="prospecting"]'));
+  setTimeout(searchProspectsReal, 100);
+};
+
+window.addEventListener('DOMContentLoaded', () => { setTimeout(window.bootAuth, 50); setTimeout(()=>{ try{ loadIntegrationStatus(); }catch(e){} }, 900); });
+</script>
+
+</body>
+</html>
