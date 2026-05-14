@@ -2,7 +2,7 @@ services:
   - type: web
     name: lxgest-crm
     env: node
-    plan: starter
+    plan: basic-256mb
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health
@@ -62,4 +62,4 @@ services:
 
 databases:
   - name: lxgest-crm-db
-    plan: starter
+    plan: basic-256mb
