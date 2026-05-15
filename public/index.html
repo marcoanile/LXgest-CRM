@@ -767,7 +767,7 @@ window.LXGEST_WHATSAPP_CONFIG = {
   <div class="view active" id="v-dashboard">
     <div class="greeting-row">
       <div class="greet"><h1>Bom dia, <span class="hl" id="dashUserName">...</span> 👋</h1><p id="dashDateLine">A carregar...</p></div>
-      <div class="date-chip"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Semana 20 · Q2 2025</div>
+      <div class="date-chip"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span id="dashDateChip"></span></div>
     </div>
 
     <div class="stats-grid">
@@ -876,17 +876,15 @@ window.LXGEST_WHATSAPP_CONFIG = {
           </div>
         </div>
         <div class="panel">
-          <div class="ph"><div><div class="pt">Tarefas de Hoje</div><div class="ps">3 de 8 concluídas</div></div><span class="pact" onclick="go('tasks',document.querySelector('[onclick*=tasks]'))">Gestão →</span></div>
+          <div class="ph"><div><div class="pt">Tarefas</div><div class="ps" id="dashTaskSub">A carregar...</div></div><span class="pact" onclick="go('tasks',document.querySelector('[onclick*=tasks]'))">Gestão →</span></div>
           <div id="dashTaskList">
             <div style="color:var(--text3);font-size:13px;padding:16px 0;text-align:center;">A carregar...</div>
           </div>
         </div>
         <div class="panel">
           <div class="ph"><div style="display:flex;align-items:center;gap:8px;"><svg width="15" height="15" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><div class="pt">WhatsApp Business</div></div><span class="pact" onclick="go('whatsapp',document.querySelector('[onclick*=whatsapp]'))">Abrir →</span></div>
-          <div>
-            <div class="wa-item"><div class="wa-av" style="background:var(--orange)">TL</div><div class="wa-info"><div class="wa-name">Tecnilab Lda</div><div class="wa-msg">Gostávamos de marcar uma reunião...</div></div><div><div class="wa-time">10:24</div><div class="wa-cnt">3</div></div></div>
-            <div class="wa-item"><div class="wa-av" style="background:#3498DB">CM</div><div class="wa-info"><div class="wa-name">Construções Mário</div><div class="wa-msg">Recebemos a proposta, obrigado!</div></div><div><div class="wa-time">09:58</div><div class="wa-cnt">1</div></div></div>
-            <div class="wa-item" style="opacity:.55;"><div class="wa-av" style="background:var(--g600)">IN</div><div class="wa-info"><div class="wa-name">Imob. Norte</div><div class="wa-msg">Confirmado para sexta-feira 10h</div></div><div><div class="wa-time">Ontem</div></div></div>
+          <div id="dashWaWidget">
+            <div style="padding:14px 18px;font-size:12.5px;color:var(--text3);">Configure WhatsApp em <span style="color:var(--orange);cursor:pointer;" onclick="openIntegrations()">Integrações</span> para ver mensagens aqui.</div>
           </div>
         </div>
       </div>
@@ -895,26 +893,19 @@ window.LXGEST_WHATSAPP_CONFIG = {
     <div class="leads-grid">
       <div class="panel">
         <div class="ph"><div><div class="pt">Leads Prioritários</div><div class="ps">Score IA · Portugal</div></div><span class="pact">Ver todos →</span></div>
-        <div class="tbl-hdr"><div class="tbl-hg"><span class="th-c">Empresa</span><span class="th-c" style="text-align:right">Valor</span><span class="th-c" style="text-align:right">Estado</span><span class="th-c" style="text-align:right">Score</span></div></div>
-        <div class="tbl-row"><div><div class="l-name">Tecnilab Lda</div><div class="l-co">Tecnologia · Lisboa</div></div><div class="l-val">€28.500</div><div><span class="badge bo">Negociação</span></div><div><div class="l-score s-hot">98</div></div></div>
-        <div class="tbl-row"><div><div class="l-name">Grupotec SA</div><div class="l-co">Indústria · Porto</div></div><div class="l-val">€45.000</div><div><span class="badge bb">Proposta</span></div><div><div class="l-score s-hot">94</div></div></div>
-        <div class="tbl-row"><div><div class="l-name">Medigest Lda</div><div class="l-co">Saúde · Braga</div></div><div class="l-val">€12.200</div><div><span class="badge bg2">Contacto</span></div><div><div class="l-score s-warm">81</div></div></div>
-        <div class="tbl-row"><div><div class="l-name">Construtora NW</div><div class="l-co">Construção · Aveiro</div></div><div class="l-val">€8.800</div><div><span class="badge bgr">Prospeção</span></div><div><div class="l-score s-cold">63</div></div></div>
+        <div class="tbl-hdr"><div class="tbl-hg"><span class="th-c">Empresa / Título</span><span class="th-c" style="text-align:right">Valor</span><span class="th-c" style="text-align:right">Fase</span><span class="th-c" style="text-align:right">Prob.</span></div></div>
+        <div id="dashLeadsTable"><div style="padding:16px 20px;font-size:12.5px;color:var(--text3);">A carregar...</div></div>
       </div>
       <div class="panel">
         <div class="ph"><div><div class="pt">Canais de Marketing</div><div class="ps">Performance Mai 2025</div></div></div>
-        <div style="padding:16px 20px;">
-          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:var(--orange);border-radius:50%;display:inline-block;"></span>Email Marketing</span><span>47.3% abertura</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--orange);" data-w="47"></div></div></div>
-          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#25D366;border-radius:50%;display:inline-block;"></span>WhatsApp</span><span>94% entrega</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#25D366;" data-w="94"></div></div></div>
-          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#0077B5;border-radius:50%;display:inline-block;"></span>LinkedIn</span><span>8.4% CTR</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#0077B5;" data-w="8"></div></div></div>
-          <div class="prog-wrap" style="margin-bottom:0;"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#E1306C;border-radius:50%;display:inline-block;"></span>Instagram</span><span>5.2% engaj.</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#E1306C;" data-w="52"></div></div></div>
+        <div style="padding:16px 20px;" id="dashMktChannels">
+          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:var(--orange);border-radius:50%;display:inline-block;"></span>Email Marketing</span><span id="dashMktEmail">—</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--orange);" id="dashMktEmailBar"></div></div></div>
+          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#25D366;border-radius:50%;display:inline-block;"></span>WhatsApp</span><span id="dashMktWa">—</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#25D366;" id="dashMktWaBar"></div></div></div>
+          <div class="prog-wrap"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#0077B5;border-radius:50%;display:inline-block;"></span>LinkedIn</span><span id="dashMktLi">—</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#0077B5;" id="dashMktLiBar"></div></div></div>
+          <div class="prog-wrap" style="margin-bottom:0;"><div class="prog-lbl"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#E1306C;border-radius:50%;display:inline-block;"></span>Instagram</span><span id="dashMktIg">—</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:#E1306C;" id="dashMktIgBar"></div></div></div>
           <div style="margin-top:16px;padding:14px;background:var(--g750);border-radius:10px;border:1px solid var(--border);">
-            <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;">Próximas Campanhas</div>
-            <div style="display:flex;flex-direction:column;gap:7px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;color:var(--text2);">📧 Newsletter Junho</span><span class="badge bo">Rascunho</span></div>
-              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;color:var(--text2);">💬 WA Promoção Verão</span><span class="badge bb">Agendada</span></div>
-              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;color:var(--text2);">📱 LinkedIn B2B Mai</span><span class="badge bg2">Ativa</span></div>
-            </div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;">Próximas Campanhas</div>
+            <div id="dashNextCampaigns" style="font-size:12.5px;color:var(--text3);">Crie campanhas em <span style="color:var(--orange);cursor:pointer;" onclick="go('campaigns',null)">Campanhas</span>.</div>
           </div>
         </div>
       </div>
@@ -935,46 +926,11 @@ window.LXGEST_WHATSAPP_CONFIG = {
           <div class="contact-item"><div class="c-av" style="background:linear-gradient(135deg,var(--warn),#c87d0b)">CN</div><div><div class="c-name">Construtora NW</div><div class="c-co">Aveiro · Construção</div></div></div>
         </div>
       </div>
-      <div class="crm-detail">
-        <div class="detail-hero">
-          <div class="dh-av" style="background:linear-gradient(135deg,var(--orange),#b85a12);font-size:22px;">TL</div>
-          <div>
-            <div class="dh-name">Tecnilab Lda</div>
-            <div class="dh-role">Tecnologia · Lisboa, Portugal · Founded 2018</div>
-            <div class="dh-badges"><span class="badge bo">Negociação</span><span class="badge bb">Score 98</span><span class="badge bg2">Hot Lead</span></div>
-          </div>
-          <div class="dh-stats">
-            <div class="dhs"><div class="dhs-val">€28.5k</div><div class="dhs-lbl">Valor negócio</div></div>
-            <div class="dhs"><div class="dhs-val">14</div><div class="dhs-lbl">Interações</div></div>
-            <div class="dhs"><div class="dhs-val">32d</div><div class="dhs-lbl">No pipeline</div></div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-          <div class="panel">
-            <div class="ph"><div class="pt">Informações</div></div>
-            <div style="padding:14px 18px;">
-              <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Contacto Principal</div><div style="font-size:13.5px;color:var(--text1);">Eng. Carlos Silva</div></div>
-              <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Email</div><div style="font-size:13.5px;color:var(--info);">carlos@tecnilab.pt</div></div>
-              <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Telefone</div><div style="font-size:13.5px;color:var(--text1);">+351 912 345 678</div></div>
-              <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Website</div><div style="font-size:13.5px;color:var(--info);">tecnilab.pt</div></div>
-              <div style="margin-bottom:0;"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;">Funcionários</div><div style="font-size:13.5px;color:var(--text1);">45–100 pessoas</div></div>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="ph"><div class="pt">Ações Rápidas</div></div>
-            <div style="padding:14px;display:flex;flex-direction:column;gap:8px;">
-              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g750);border-radius:9px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='var(--orange-glow)'" onmouseout="this.style.background='var(--g750)'"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span style="font-size:13px;color:var(--text1);">Enviar Email</span></div>
-              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g750);border-radius:9px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='rgba(37,211,102,.1)'" onmouseout="this.style.background='var(--g750)'"><svg width="15" height="15" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967c-.273-.099-.471-.148-.67.15c-.197.297-.767.966-.94 1.164c-.173.199-.347.223-.644.075c-.297-.15-1.255-.463-2.39-1.475c-.883-.788-1.48-1.761-1.653-2.059c-.173-.297-.018-.458.13-.606c.134-.133.298-.347.446-.52c.149-.174.198-.298.298-.497c.099-.198.05-.371-.025-.52c-.075-.149-.669-1.612-.916-2.207c-.242-.579-.487-.5-.669-.51c-.173-.008-.371-.01-.57-.01c-.198 0-.52.074-.792.372c-.272.297-1.04 1.016-1.04 2.479c0 1.462 1.065 2.875 1.213 3.074c.149.198 2.096 3.2 5.077 4.487c.709.306 1.262.489 1.694.625c.712.227 1.36.195 1.871.118c.571-.085 1.758-.719 2.006-1.413c.248-.694.248-1.289.173-1.413c-.074-.124-.272-.198-.57-.347z"/></svg><span style="font-size:13px;color:var(--text1);">WhatsApp</span></div>
-              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g750);border-radius:9px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--g750)'"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--info)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span style="font-size:13px;color:var(--text1);">Agendar Reunião</span></div>
-              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g750);border-radius:9px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--g750)'"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--warn)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="font-size:13px;color:var(--text1);">Criar Proposta</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="timeline">
-          <div class="tl-title">Timeline de Atividades</div>
-          <div class="tl-item"><div class="tl-ico" style="background:rgba(232,115,26,.1);border-color:rgba(232,115,26,.3);"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="tl-body"><div class="tl-head"><span class="tl-action">Chamada de seguimento realizada</span><span class="tl-date">Hoje, 10:45</span></div><div class="tl-desc">Carlos confirmou interesse na proposta. Aguarda aprovação interna até 20/Mai.</div></div></div>
-          <div class="tl-item"><div class="tl-ico" style="background:rgba(52,152,219,.1);border-color:rgba(52,152,219,.3);"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--info)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg></div><div class="tl-body"><div class="tl-head"><span class="tl-action">Proposta comercial enviada</span><span class="tl-date">Ontem, 16:30</span></div><div class="tl-desc">Proposta detalhada enviada por email: Pacote Enterprise €28.500/ano.</div></div></div>
-          <div class="tl-item"><div class="tl-ico" style="background:rgba(46,204,113,.1);border-color:rgba(46,204,113,.3);"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--success)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="tl-body"><div class="tl-head"><span class="tl-action">Reunião de demonstração</span><span class="tl-date">12 Mai, 14:00</span></div><div class="tl-desc">Demo da plataforma realizada com equipa técnica. Feedback muito positivo.</div></div></div>
+      <div class="crm-detail" id="crmDetail">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;color:var(--text3);text-align:center;padding:40px;">
+          <svg width="52" height="52" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1" style="margin-bottom:16px;opacity:.3;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:6px;">Selecione um contacto</div>
+          <div style="font-size:12.5px;">Clique num contacto da lista para ver os detalhes</div>
         </div>
       </div>
     </div>
@@ -1016,26 +972,15 @@ window.LXGEST_WHATSAPP_CONFIG = {
       <div class="wa-sidebar">
         <div class="ph" style="border-bottom:1px solid var(--border);"><div style="display:flex;align-items:center;gap:8px;"><svg width="16" height="16" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967c-.273-.099-.471-.148-.67.15c-.197.297-.767.966-.94 1.164c-.173.199-.347.223-.644.075c-.297-.15-1.255-.463-2.39-1.475c-.883-.788-1.48-1.761-1.653-2.059c-.173-.297-.018-.458.13-.606c.134-.133.298-.347.446-.52c.149-.174.198-.298.298-.497c.099-.198.05-.371-.025-.52c-.075-.149-.669-1.612-.916-2.207c-.242-.579-.487-.5-.669-.51c-.173-.008-.371-.01-.57-.01c-.198 0-.52.074-.792.372c-.272.297-1.04 1.016-1.04 2.479c0 1.462 1.065 2.875 1.213 3.074c.149.198 2.096 3.2 5.077 4.487c.709.306 1.262.489 1.694.625c.712.227 1.36.195 1.871.118c.571-.085 1.758-.719 2.006-1.413c.248-.694.248-1.289.173-1.413c-.074-.124-.272-.198-.57-.347z"/></svg><div class="pt">WhatsApp</div></div><span class="pact" style="font-size:11px;">+ Nova conversa</span></div>
         <div style="padding:10px 12px;border-bottom:1px solid var(--border);"><div style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="var(--text3)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input style="background:none;border:none;outline:none;color:var(--text1);font-size:12.5px;width:100%;" placeholder="Pesquisar..."></div></div>
-        <div class="wa-chats">
-          <div class="wa-chat-item sel"><div class="wa-ci-av" style="background:var(--orange)">TL</div><div style="flex:1;min-width:0;"><div class="wa-ci-name">Tecnilab Lda</div><div class="wa-ci-msg">Gostávamos de marcar uma reunião...</div></div><div><div class="wa-ci-time">10:24</div><div class="wa-cnt2">3</div></div></div>
-          <div class="wa-chat-item"><div class="wa-ci-av" style="background:#3498DB">CM</div><div style="flex:1;min-width:0;"><div class="wa-ci-name">Construções Mário</div><div class="wa-ci-msg">Recebemos a proposta, obrigado!</div></div><div><div class="wa-ci-time">09:58</div><div class="wa-cnt2">1</div></div></div>
-          <div class="wa-chat-item"><div class="wa-ci-av" style="background:#9B59B6">IN</div><div style="flex:1;min-width:0;"><div class="wa-ci-name">Imob. Norte</div><div class="wa-ci-msg">Confirmado para sexta 10h</div></div><div><div class="wa-ci-time">Ontem</div></div></div>
-          <div class="wa-chat-item"><div class="wa-ci-av" style="background:var(--success)">GT</div><div style="flex:1;min-width:0;"><div class="wa-ci-name">Grupotec SA</div><div class="wa-ci-msg">Quando nos enviam a proposta final?</div></div><div><div class="wa-ci-time">Seg</div></div></div>
+        <div class="wa-chats" id="waChatList">
+          <div style="padding:24px 16px;font-size:12.5px;color:var(--text3);text-align:center;line-height:1.6;">Configure o WhatsApp Business em <span style="color:var(--orange);cursor:pointer;" onclick="openIntegrations()">Integrações</span> para ver conversas aqui.</div>
         </div>
       </div>
-      <div class="wa-main">
-        <div class="wa-top"><div class="wa-ci-av" style="background:var(--orange);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">TL</div><div><div class="wa-top-name">Tecnilab Lda</div><div class="wa-top-status">● Online</div></div><div style="margin-left:auto;display:flex;gap:8px;"><div class="ico-btn"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.27 19.79 19.79 0 0 1 1.61 .64 2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 7.91a16 16 0 0 0 6.08 6.08l1.08-1.08a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="ico-btn"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div></div></div>
-        <div class="wa-msgs">
-          <div class="msg-bubble msg-in">Olá! Somos a Tecnilab Lda. Gostaríamos de saber mais sobre as vossas soluções de CRM para empresas de tecnologia.<div class="msg-time">10:15</div></div>
-          <div class="msg-bubble msg-out">Bom dia! Claro, ficaríamos muito contentes em apresentar as nossas soluções. Pode me dizer qual o vosso principal desafio atual em gestão comercial?<div class="msg-time">10:18</div></div>
-          <div class="msg-bubble msg-in">O principal desafio é gerir o pipeline de vendas e automatizar follow-ups. Temos uma equipa de 8 comerciais.<div class="msg-time">10:20</div></div>
-          <div class="msg-bubble msg-out">Perfeito! O LXGest CRM é ideal para isso. Temos automação completa de follow-ups e pipeline visual. Posso agendar uma demonstração para a sua equipa?<div class="msg-time">10:22</div></div>
-          <div class="msg-bubble msg-in">Sim, gostaríamos de marcar uma reunião. Quando têm disponibilidade?<div class="msg-time">10:24</div></div>
-        </div>
-        <div class="wa-inp-area">
-          <div style="display:flex;align-items:center;gap:8px;"><div class="ico-btn" style="width:32px;height:32px;border-radius:50%;"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></div></div>
-          <input class="wa-inp" placeholder="Escreva uma mensagem...">
-          <div class="wa-send"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+      <div class="wa-main" id="waMainArea">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;color:var(--text3);text-align:center;padding:32px;gap:12px;">
+          <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1" style="opacity:.3;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <div style="font-size:14px;font-weight:600;color:var(--text2);">WhatsApp Business não configurado</div>
+          <div style="font-size:12.5px;">Aceda a <span style="color:var(--orange);cursor:pointer;" onclick="openIntegrations()">Integrações</span> e introduza o WHATSAPP_TOKEN e WHATSAPP_PHONE_NUMBER_ID para ativar o módulo.</div>
         </div>
       </div>
     </div>
@@ -1112,10 +1057,8 @@ window.LXGEST_WHATSAPP_CONFIG = {
       <div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Campanhas de Marketing</div><div style="font-size:12px;color:var(--text3);">3 ativas · 2 em rascunho</div></div>
       <div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" id="btnNewCampaign" onclick="openNewCampaignModal()">+ Nova Campanha</div>
     </div>
-    <div class="camp-grid">
-      <div class="camp-card"><div class="camp-banner" style="background:linear-gradient(135deg,var(--orange),#c45e12);"><span style="font-size:32px;opacity:.3;position:absolute;">📧</span></div><div class="camp-info"><div class="camp-name">Newsletter Maio 2025</div><div class="camp-type">Email Marketing · Enviada a 12 Mai</div><div class="camp-stats"><div class="cs"><div class="cs-val" style="color:var(--orange);">47%</div><div class="cs-lbl">Abertura</div></div><div class="cs"><div class="cs-val" style="color:var(--info);">12%</div><div class="cs-lbl">Cliques</div></div><div class="cs"><div class="cs-val" style="color:var(--success);">3.2%</div><div class="cs-lbl">Conversão</div></div></div><span class="badge bg2">Concluída</span></div></div>
-      <div class="camp-card"><div class="camp-banner" style="background:linear-gradient(135deg,#25D366,#128C7E);"><span style="font-size:32px;opacity:.3;position:absolute;">💬</span></div><div class="camp-info"><div class="camp-name">WA Promo Primavera</div><div class="camp-type">WhatsApp Business · Ativa</div><div class="camp-stats"><div class="cs"><div class="cs-val" style="color:#25D366;">94%</div><div class="cs-lbl">Entrega</div></div><div class="cs"><div class="cs-val" style="color:var(--info);">38%</div><div class="cs-lbl">Resposta</div></div><div class="cs"><div class="cs-val" style="color:var(--success);">8.1%</div><div class="cs-lbl">Conversão</div></div></div><span class="badge bg2">Ativa</span></div></div>
-      <div class="camp-card"><div class="camp-banner" style="background:linear-gradient(135deg,#0077B5,#005885);"><span style="font-size:32px;opacity:.3;position:absolute;">💼</span></div><div class="camp-info"><div class="camp-name">LinkedIn B2B Maio</div><div class="camp-type">Redes Sociais · Em curso</div><div class="camp-stats"><div class="cs"><div class="cs-val" style="color:#0077B5;">2.8k</div><div class="cs-lbl">Alcance</div></div><div class="cs"><div class="cs-val" style="color:var(--info);">8.4%</div><div class="cs-lbl">CTR</div></div><div class="cs"><div class="cs-val" style="color:var(--success);">42</div><div class="cs-lbl">Leads</div></div></div><span class="badge bb">Ativa</span></div></div>
+    <div class="camp-grid" id="campaignsList">
+      <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text3);">A carregar campanhas...</div>
     </div>
   </div>
 
@@ -1142,24 +1085,20 @@ window.LXGEST_WHATSAPP_CONFIG = {
       <div class="email-metrics">
         <div class="em-card">
           <div class="em-title">Métricas da Campanha</div>
-          <div class="em-stat"><span class="em-s-lbl">Lista de contactos</span><span class="em-s-val">1.847</span></div>
-          <div class="em-stat"><span class="em-s-lbl">Taxa de abertura</span><span class="em-s-val" style="color:var(--orange);">47.3%</span></div>
-          <div class="em-stat"><span class="em-s-lbl">Taxa de cliques</span><span class="em-s-val" style="color:var(--info);">12.1%</span></div>
-          <div class="em-stat"><span class="em-s-lbl">Conversões</span><span class="em-s-val" style="color:var(--success);">58</span></div>
-          <div class="em-stat"><span class="em-s-lbl">Cancelamentos</span><span class="em-s-val" style="color:var(--danger);">12</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Lista de contactos</span><span class="em-s-val" id="emContacts">—</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Taxa de abertura</span><span class="em-s-val" style="color:var(--orange);" id="emOpen">—</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Taxa de cliques</span><span class="em-s-val" style="color:var(--info);" id="emClick">—</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Conversões</span><span class="em-s-val" style="color:var(--success);" id="emConv">—</span></div>
+          <div class="em-stat"><span class="em-s-lbl">Cancelamentos</span><span class="em-s-val" style="color:var(--danger);" id="emUnsub">—</span></div>
+          <div style="margin-top:10px;font-size:11.5px;color:var(--text3);line-height:1.5;">Configure Email em <span style="color:var(--orange);cursor:pointer;" onclick="openIntegrations()">Integrações</span> para ver métricas reais.</div>
         </div>
         <div class="em-card">
           <div class="em-title">Segmentação</div>
-          <div class="prog-wrap"><div class="prog-lbl"><span>B2B Tech</span><span>38%</span></div><div class="prog-bar"><div class="prog-fill" style="width:38%;background:var(--orange);"></div></div></div>
-          <div class="prog-wrap"><div class="prog-lbl"><span>Indústria</span><span>24%</span></div><div class="prog-bar"><div class="prog-fill" style="width:24%;background:var(--info);"></div></div></div>
-          <div class="prog-wrap" style="margin-bottom:0;"><div class="prog-lbl"><span>Outros</span><span>38%</span></div><div class="prog-bar"><div class="prog-fill" style="width:38%;background:var(--g600);"></div></div></div>
+          <div style="padding:16px 0;color:var(--text3);font-size:12.5px;text-align:center;">Crie segmentos em <span style="color:var(--orange);cursor:pointer;" onclick="go('segments',null)">Segmentação</span> para ver aqui.</div>
         </div>
         <div class="em-card">
           <div class="em-title">Automação Ativa</div>
-          <div class="em-stat"><span class="em-s-lbl">📧 Welcome email</span><span class="badge bg2">Ativo</span></div>
-          <div class="em-stat"><span class="em-s-lbl">🔄 Follow-up D+3</span><span class="badge bg2">Ativo</span></div>
-          <div class="em-stat"><span class="em-s-lbl">🎯 Nurturing D+7</span><span class="badge bo">Pausado</span></div>
-          <div class="em-stat"><span class="em-s-lbl">💎 Re-engagement</span><span class="badge bgr">Rascunho</span></div>
+          <div style="padding:16px 0;color:var(--text3);font-size:12.5px;text-align:center;">Configure automações em <span style="color:var(--orange);cursor:pointer;" onclick="go('automations',null)">Automações</span>.</div>
         </div>
       </div>
     </div>
@@ -1185,21 +1124,8 @@ window.LXGEST_WHATSAPP_CONFIG = {
   <!-- ══════════ TASKS ══════════ -->
   <div class="view" id="v-tasks">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Gestão de Tarefas</div><div style="font-size:12px;color:var(--text3);">Equipa LXGest · Maio 2025</div></div><div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" id="btnNewTask" onclick="openNewTaskModal()">+ Nova Tarefa</div></div>
-    <div class="tasks-grid">
-      <div class="tasks-col"><div class="tc-head"><span class="tc-title"><span class="tc-dot" style="background:#546070;"></span>A Fazer</span><span class="tc-count">4</span></div><div class="tc-cards">
-        <div class="tc-card"><div class="tc-card-title">Preparar relatório Q2</div><div class="tc-card-desc">Relatório completo de performance do segundo trimestre 2025.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Alta</span><div class="task-av" style="background:#9B59B6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">MA</div></div></div>
-        <div class="tc-card"><div class="tc-card-title">Follow-up Construções Mário</div><div class="tc-card-desc">Ligar para confirmar interesse na proposta enviada.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Alta</span><div class="task-av" style="background:#3498DB;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">RC</div></div></div>
-        <div class="tc-card"><div class="tc-card-title">Atualizar base de dados leads</div><div class="tc-card-desc">Limpar e organizar lista de leads do mês passado.</div><div class="tc-card-ft"><span class="tc-prio prio-mid">Média</span><div class="task-av" style="background:var(--orange);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">JF</div></div></div>
-      </div><div class="add-task"><button class="add-task-btn">+ Adicionar tarefa</button></div></div>
-      <div class="tasks-col"><div class="tc-head"><span class="tc-title"><span class="tc-dot" style="background:var(--orange);"></span>Em Progresso</span><span class="tc-count">3</span></div><div class="tc-cards">
-        <div class="tc-card" style="border-color:rgba(232,115,26,.2);"><div class="tc-card-title">Negociação Tecnilab 🔥</div><div class="tc-card-desc">Negociação final contrato anual €28.500. Deadline: 20 Mai.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Urgente</span><div class="task-av" style="background:var(--orange);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">JF</div></div></div>
-        <div class="tc-card"><div class="tc-card-title">Campanha Email Junho</div><div class="tc-card-desc">Criar conteúdo e templates para newsletter de Junho.</div><div class="tc-card-ft"><span class="tc-prio prio-mid">Média</span><div class="task-av" style="background:#9B59B6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">MA</div></div></div>
-        <div class="tc-card"><div class="tc-card-title">Proposta Grupotec SA</div><div class="tc-card-desc">Finalizar proposta Enterprise €45.000 com todos os detalhes.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Alta</span><div class="task-av" style="background:#3498DB;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">RC</div></div></div>
-      </div><div class="add-task"><button class="add-task-btn">+ Adicionar tarefa</button></div></div>
-      <div class="tasks-col"><div class="tc-head"><span class="tc-title"><span class="tc-dot" style="background:var(--success);"></span>Concluído</span><span class="tc-count">8</span></div><div class="tc-cards">
-        <div class="tc-card" style="opacity:.7;"><div class="tc-card-title" style="text-decoration:line-through;color:var(--text3);">Proposta Tecnilab</div><div class="tc-card-desc">✓ Enviada com sucesso em 13 Mai</div><div class="tc-card-ft"><span class="badge bg2">Feito</span><div class="task-av" style="background:var(--orange);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">JF</div></div></div>
-        <div class="tc-card" style="opacity:.7;"><div class="tc-card-title" style="text-decoration:line-through;color:var(--text3);">Importar leads Excel</div><div class="tc-card-desc">✓ 247 leads importados com sucesso</div><div class="tc-card-ft"><span class="badge bg2">Feito</span><div class="task-av" style="background:#3498DB;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">RC</div></div></div>
-      </div></div>
+    <div id="tasksList" style="min-height:200px;">
+      <div style="padding:40px;text-align:center;color:var(--text3);">A carregar tarefas...</div>
     </div>
   </div>
 
@@ -1233,10 +1159,10 @@ window.LXGEST_WHATSAPP_CONFIG = {
   <!-- ══════════ ANALYTICS ══════════ -->
   <div class="view" id="v-analytics">
     <div class="metric-row">
-      <div class="metric-box"><div class="mb-val">€84.3k</div><div class="mb-lbl">Receita Mai 2025</div><div class="mb-chg up">↑ +12.4%</div></div>
-      <div class="metric-box"><div class="mb-val" style="color:var(--info);">247</div><div class="mb-lbl">Novos Leads</div><div class="mb-chg up">↑ +8.1%</div></div>
-      <div class="metric-box"><div class="mb-val" style="color:var(--success);">34.2%</div><div class="mb-lbl">Conversão</div><div class="mb-chg up">↑ +2.8pp</div></div>
-      <div class="metric-box"><div class="mb-val" style="color:var(--purple);">€1.140</div><div class="mb-lbl">Ticket Médio</div><div class="mb-chg up">↑ +5.3%</div></div>
+      <div class="metric-box"><div class="mb-val" id="anaRevenue">—</div><div class="mb-lbl">Receita (Negócios Fechados)</div><div class="mb-chg" id="anaRevChg"></div></div>
+      <div class="metric-box"><div class="mb-val" style="color:var(--info);" id="anaLeads">—</div><div class="mb-lbl">Total Contactos</div><div class="mb-chg" id="anaLeadsChg"></div></div>
+      <div class="metric-box"><div class="mb-val" style="color:var(--success);" id="anaConv">—</div><div class="mb-lbl">Taxa Conversão</div><div class="mb-chg" id="anaConvChg"></div></div>
+      <div class="metric-box"><div class="mb-val" style="color:var(--purple);" id="anaTicket">—</div><div class="mb-lbl">Ticket Médio</div><div class="mb-chg" id="anaTicketChg"></div></div>
     </div>
     <div class="analytics-grid">
       <div class="panel"><div class="ph"><div class="pt">Receita por Mês</div></div><div class="chart-area"><div class="chart-wrap">
@@ -1259,10 +1185,8 @@ window.LXGEST_WHATSAPP_CONFIG = {
         </div>
       </div>
       <div class="panel"><div class="ph"><div class="pt">Performance por Comercial</div></div>
-        <div style="padding:14px 20px;display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;align-items:center;gap:12px;"><div class="uav">JF</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">João Ferreira</div><div class="prog-bar" style="margin-top:4px;"><div class="prog-fill" style="width:94%;background:var(--orange);"></div></div></div><div style="font-size:14px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:var(--orange);">€42k</div></div>
-          <div style="display:flex;align-items:center;gap:12px;"><div class="uav" style="background:linear-gradient(135deg,#3498DB,#1a6fa8);">RC</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Rui Costa</div><div class="prog-bar" style="margin-top:4px;"><div class="prog-fill" style="width:68%;background:#3498DB;"></div></div></div><div style="font-size:14px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:#3498DB;">€28k</div></div>
-          <div style="display:flex;align-items:center;gap:12px;"><div class="uav" style="background:linear-gradient(135deg,#9B59B6,#6c3483);">MA</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Maria Alves</div><div class="prog-bar" style="margin-top:4px;"><div class="prog-fill" style="width:52%;background:#9B59B6;"></div></div></div><div style="font-size:14px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:#9B59B6;">€22k</div></div>
+        <div style="padding:14px 20px;" id="anaByUser">
+          <div style="color:var(--text3);font-size:12.5px;padding:12px 0;text-align:center;">A carregar...</div>
         </div>
       </div>
       <div class="panel"><div class="ph"><div class="pt">NPS & Satisfação</div></div>
@@ -1286,11 +1210,7 @@ window.LXGEST_WHATSAPP_CONFIG = {
       </div>
       <div class="ai-chat">
         <div class="ai-chat-msgs" id="aiChatMsgs">
-          <div class="ai-msg"><div class="ai-msg-av ai-av"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="ai-bubble ai">Olá João! Sou o Assistente IA do LXGest. Analisei os seus dados de hoje e tenho 3 insights importantes para partilhar. Posso começar?</div></div>
-          <div class="ai-msg user"><div class="ai-msg-av user-av">JF</div><div class="ai-bubble user">Sim, por favor! O que encontraste de importante?</div></div>
-          <div class="ai-msg"><div class="ai-msg-av ai-av"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="ai-bubble ai"><strong>1. 🔥 Oportunidade Urgente:</strong> A Tecnilab visitou o vosso site 3 vezes hoje. Score IA: 98/100. Sugestão: ligar agora.<br><br><strong>2. ⚠️ Risco de Perda:</strong> 5 leads no pipeline sem atividade há +7 dias representam €28.400 em risco. Recomendo automação de follow-up.<br><br><strong>3. 📈 Tendência Positiva:</strong> A taxa de conversão subiu 2.8pp este mês. O segmento B2B Tech está a responder 34% melhor às campanhas de email.</div></div>
-          <div class="ai-msg user"><div class="ai-msg-av user-av">JF</div><div class="ai-bubble user">Podes criar um email de follow-up automático para esses 5 leads?</div></div>
-          <div class="ai-msg"><div class="ai-msg-av ai-av"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="ai-bubble ai">Claro! Criando sequência de follow-up personalizada para os 5 leads inativos com base no seu histórico de conversação e setor de atividade... ✅ Sequência criada: Email D+0, WhatsApp D+2, LinkedIn D+5. Activar?</div></div>
+          <div class="ai-msg"><div class="ai-msg-av ai-av"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="ai-bubble ai">Olá! Sou o Assistente IA do LXGest. Configure a sua ANTHROPIC_API_KEY em <strong>Integrações</strong> para ativar análises automáticas e respostas inteligentes.<br><br>Depois disso pode perguntar-me sobre os seus contactos, pipeline, campanhas — qualquer coisa relacionada com o seu CRM.</div></div>
         </div>
         <div class="ai-inp-row">
           <textarea class="ai-inp" id="aiInput" rows="1" placeholder="Pergunta algo ao assistente IA..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMessage();}"></textarea>
@@ -2297,18 +2217,32 @@ window.loadCampaigns=async function(){
   try{
     const d=await apiFetch('/campaigns');
     const cs=d.campaigns||[];
-    if(!cs.length){el.innerHTML='<div class="lx-empty">Sem campanhas. Clique em + Nova Campanha para criar.</div>';return;}
-    el.innerHTML=cs.map(c=>`<div class="lx-item">
-      <div class="lx-av" style="background:var(--orange)">${ini2(c.name)}</div>
-      <div class="lx-info">
-        <div class="lx-name">${esc(c.name)} <span class="badge ${CAMP_BADGE[c.status]||'bgr'}">${CAMP_STATUS[c.status]||c.status}</span></div>
-        <div class="lx-meta">${esc(c.type||'email')} \u00b7 Or\u00e7amento: ${fmtEur(c.budget)}${c.starts_at?' \u00b7 In\u00edcio: '+String(c.starts_at).slice(0,10):''}</div>
+    if(!cs.length){
+      el.innerHTML='<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--text3);"><svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px;opacity:.3;display:block;margin-left:auto;margin-right:auto;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>Sem campanhas criadas. Clique em <strong>+ Nova Campanha</strong> para come\u00e7ar.</div>';
+      return;
+    }
+    const TYPE_ICONS={email:'\ud83d\udce7',whatsapp:'\ud83d\udcac',social:'\ud83d\udcf1',sms:'\ud83d\udcf1'};
+    const TYPE_BG={email:'linear-gradient(135deg,var(--orange),#c45e12)',whatsapp:'linear-gradient(135deg,#25D366,#128C7E)',social:'linear-gradient(135deg,#0077B5,#005885)',sms:'linear-gradient(135deg,#9B59B6,#6c3483)'};
+    el.innerHTML=cs.map(c=>`<div class="camp-card">
+      <div class="camp-banner" style="background:${TYPE_BG[c.type]||'linear-gradient(135deg,var(--g700),var(--g600))'};">
+        <span style="font-size:32px;opacity:.3;position:absolute;">${TYPE_ICONS[c.type]||'\ud83d\udccb'}</span>
       </div>
-      <div class="lx-actions">
-        <button class="lx-act" onclick="openEditCampaign('${c.id}')">Editar</button>
-        <button class="lx-act del" onclick="delCampaign('${c.id}','${esc(c.name||'')}')">Apagar</button>
-      </div></div>`).join('');
-  }catch(e){el.innerHTML='<div class="lx-empty">Erro: '+esc(e.message)+'</div>';}
+      <div class="camp-info">
+        <div class="camp-name">${esc(c.name)}</div>
+        <div class="camp-type">${esc(c.type||'email')} \u00b7 ${c.starts_at?'In\u00edcio: '+String(c.starts_at).slice(0,10):'Sem data'}</div>
+        <div class="camp-stats">
+          <div class="cs"><div class="cs-val" style="color:var(--orange);">${fmtEur(c.budget)||'\u2014'}</div><div class="cs-lbl">Or\u00e7amento</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+          <span class="badge ${CAMP_BADGE[c.status]||'bgr'}">${CAMP_STATUS[c.status]||c.status}</span>
+          <div style="display:flex;gap:6px;">
+            <button class="lx-act" style="font-size:11px;padding:4px 8px;" onclick="openEditCampaign('${c.id}')">Editar</button>
+            <button class="lx-act del" style="font-size:11px;padding:4px 8px;" onclick="delCampaign('${c.id}','${esc(c.name||'')}')">\u2715</button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+  }catch(e){el.innerHTML='<div style="grid-column:1/-1;" class="lx-empty">Erro: '+esc(e.message)+'</div>';}
 };
 
 window.openNewCampaignModal=function(){
@@ -2360,13 +2294,18 @@ window.loadDashboard = async function() {
   const tk = localStorage.getItem('lxgest_api_token_v1');
   if (!tk || tk === 'demo-mode') return;
 
-  // Date line
+  // Date line + chip
+  const now = new Date();
+  const days = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const dl = document.getElementById('dashDateLine');
-  if (dl) {
-    const now = new Date();
-    const days = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
-    const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    dl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  if (dl) dl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  const chip = document.getElementById('dashDateChip');
+  if (chip) {
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const weekNum = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+    const quarter = 'Q' + Math.ceil((now.getMonth() + 1) / 3);
+    chip.textContent = `Semana ${weekNum} · ${quarter} ${now.getFullYear()}`;
   }
 
   const h = { 'Authorization': 'Bearer ' + tk, 'Content-Type': 'application/json' };
@@ -2374,21 +2313,21 @@ window.loadDashboard = async function() {
   // Load contacts
   let contacts = [];
   try {
-    const r = await fetch('/contacts', { headers: h });
+    const r = await fetch('/api/contacts', { headers: h });
     if (r.ok) { const d = await r.json(); contacts = d.contacts || []; }
   } catch(e) {}
 
   // Load opportunities
   let opps = [];
   try {
-    const r = await fetch('/opportunities', { headers: h });
+    const r = await fetch('/api/opportunities', { headers: h });
     if (r.ok) { const d = await r.json(); opps = d.opportunities || []; }
   } catch(e) {}
 
   // Load tasks
   let tasks = [];
   try {
-    const r = await fetch('/tasks', { headers: h });
+    const r = await fetch('/api/tasks', { headers: h });
     if (r.ok) { const d = await r.json(); tasks = d.tasks || []; }
   } catch(e) {}
 
@@ -2396,14 +2335,14 @@ window.loadDashboard = async function() {
   const dlEl = document.getElementById('dashLeads');
   if (dlEl) dlEl.textContent = contacts.length;
 
-  // Deals stat
-  const activeOpps = opps.filter(o => o.status !== 'fechado_ganho' && o.status !== 'fechado_perdido');
+  // Deals stat — exclude closed stage
+  const activeOpps = opps.filter(o => o.stage !== 'closed');
   const ddEl = document.getElementById('dashDeals');
   if (ddEl) ddEl.textContent = activeOpps.length;
 
-  // Revenue stat (sum of won opportunities)
-  const wonOpps = opps.filter(o => o.status === 'fechado_ganho');
-  const revenue = wonOpps.reduce((s, o) => s + parseFloat(o.value || o.valor || 0), 0);
+  // Revenue stat (sum of closed/won opportunities)
+  const wonOpps = opps.filter(o => o.stage === 'closed');
+  const revenue = wonOpps.reduce((s, o) => s + parseFloat(o.value || 0), 0);
   const drEl = document.getElementById('dashRevenue');
   if (drEl) drEl.textContent = revenue > 0 ? revenue.toLocaleString('pt-PT') : '0';
 
@@ -2411,6 +2350,74 @@ window.loadDashboard = async function() {
   const conv = opps.length > 0 ? Math.round((wonOpps.length / opps.length) * 100) : 0;
   const dcEl = document.getElementById('dashConv');
   if (dcEl) dcEl.textContent = conv;
+
+  // Update AI insights with real data
+  const aiInsights = document.querySelector('.ai-insights');
+  if (aiInsights) {
+    if (contacts.length === 0 && opps.length === 0) {
+      aiInsights.innerHTML = '<div class="ai-insight"><div class="ai-bullet">✦</div><span>Adicione contactos e negócios ao CRM para receber insights automáticos.</span></div>';
+    } else {
+      const items = [];
+      if (activeOpps.length > 0) {
+        const totalVal = activeOpps.reduce((s,o)=>s+parseFloat(o.value||0),0);
+        items.push(`<div class="ai-insight"><div class="ai-bullet">✦</div><span><strong style="color:var(--text1)">${activeOpps.length} negócios ativos</strong> no pipeline com valor total de <strong style="color:var(--orange)">€${totalVal.toLocaleString('pt-PT')}</strong>.</span></div>`);
+      }
+      if (contacts.length > 0) items.push(`<div class="ai-insight"><div class="ai-bullet">✦</div><span><strong style="color:var(--text1)">${contacts.length} contactos</strong> registados. Configure o Assistente IA em <span style="color:var(--orange);cursor:pointer;" onclick="openIntegrations()">Integrações</span> para insights avançados.</span></div>`);
+      const pending = tasks.filter(t=>t.status!=='concluida').length;
+      if (pending > 0) items.push(`<div class="ai-insight"><div class="ai-bullet">✦</div><span><strong style="color:var(--text1)">${pending} tarefas</strong> pendentes. Aceda a <span style="color:var(--orange);cursor:pointer;" onclick="go('tasks',null)">Tarefas</span> para gerir prioridades.</span></div>`);
+      aiInsights.innerHTML = items.join('') || '<div class="ai-insight"><div class="ai-bullet">✦</div><span>Configure o Assistente IA em <span style="color:var(--orange);cursor:pointer;" onclick="openIntegrations()">Integrações</span> para análises automáticas.</span></div>';
+    }
+  }
+
+  // Dashboard leads table — populate from real opportunities
+  const leadsTable = document.getElementById('dashLeadsTable');
+  if (leadsTable) {
+    if (opps.length === 0) {
+      leadsTable.innerHTML = '<div style="padding:16px 20px;font-size:12.5px;color:var(--text3);">Sem negócios no pipeline. Crie o primeiro em <span style="color:var(--orange);cursor:pointer;" onclick="go(\'pipeline\',null)">Pipeline</span>.</div>';
+    } else {
+      leadsTable.innerHTML = opps.slice(0,4).map(o => `<div class="tbl-row"><div><div class="l-name">${esc(o.title||o.company||'Negócio')}</div><div class="l-co">${esc(o.company||o.stage||'')}</div></div><div class="l-val">${o.value?'€'+parseFloat(o.value).toLocaleString('pt-PT'):'—'}</div><div><span class="badge bo">${esc(o.stage||'pipeline')}</span></div><div><div class="l-score s-warm">${o.probability||0}%</div></div></div>`).join('');
+    }
+  }
+
+  // Dashboard next campaigns — load from campaigns API
+  try {
+    const rc = await fetch('/api/campaigns', { headers: h });
+    if (rc.ok) {
+      const dc = await rc.json();
+      const camps = (dc.campaigns || []).slice(0,3);
+      const nc = document.getElementById('dashNextCampaigns');
+      if (nc) {
+        if (camps.length === 0) {
+          nc.innerHTML = 'Crie campanhas em <span style="color:var(--orange);cursor:pointer;" onclick="go(\'campaigns\',null)">Campanhas</span>.';
+        } else {
+          const icons = { email:'📧', whatsapp:'💬', social:'📱', sms:'📱' };
+          nc.innerHTML = camps.map(c => `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:12.5px;color:var(--text2);">${icons[c.type]||'📋'} ${esc(c.name)}</span><span class="badge ${c.status==='active'?'bg2':c.status==='draft'?'bgr':'bb'}">${c.status==='active'?'Ativa':c.status==='draft'?'Rascunho':'Pausada'}</span></div>`).join('');
+        }
+      }
+    }
+  } catch(e) {}
+
+  // Dashboard funnel — update with real data
+  const pipePanels = document.querySelectorAll('#v-dashboard .panel .ps');
+  pipePanels.forEach(ps => {
+    if (ps.textContent.includes('negócios')) {
+      const totalV = opps.reduce((s,o)=>s+parseFloat(o.value||0),0);
+      ps.textContent = `${opps.length} negócios · €${totalV.toLocaleString('pt-PT')} potencial total`;
+    }
+  });
+  const pipeStageVals = document.querySelectorAll('#v-dashboard .stage-v');
+  if (pipeStageVals.length >= 5) {
+    const stages = ['prospection','contact','proposal','negotiation','closed'];
+    stages.forEach((s,i) => { pipeStageVals[i].textContent = opps.filter(o=>o.stage===s).length; });
+  }
+  const metaLbl = document.querySelector('#v-dashboard .prog-lbl');
+  if (metaLbl) {
+    const spans = metaLbl.querySelectorAll('span');
+    if (spans[1] && spans[0] && spans[0].textContent.includes('Meta')) {
+      const pct = revenue > 0 ? Math.min(Math.round((revenue/90000)*100),100) : 0;
+      spans[1].textContent = pct + '% — €' + revenue.toLocaleString('pt-PT');
+    }
+  }
 
   // Activity list — show recent contacts
   const al = document.getElementById('dashActivityList');
@@ -2435,20 +2442,24 @@ window.loadDashboard = async function() {
     }
   }
 
-  // Tasks list — show today's tasks
+  // Tasks list — show tasks
   const tl = document.getElementById('dashTaskList');
+  const ts = document.getElementById('dashTaskSub');
   if (tl) {
     if (tasks.length === 0) {
       tl.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:16px 0;text-align:center;">Sem tarefas. <span style="color:var(--orange);cursor:pointer;" onclick="go(\'tasks\',null);setTimeout(openNewTaskModal,150)">+ Nova tarefa</span></div>';
+      if (ts) ts.textContent = '0 tarefas';
     } else {
       const today = new Date().toISOString().slice(0,10);
+      const done = tasks.filter(t=>t.status==='concluida').length;
+      if (ts) ts.textContent = `${done} de ${tasks.length} concluídas`;
       const shown = tasks.slice(0,4);
       tl.innerHTML = shown.map(t => {
-        const done = t.status === 'concluida';
+        const isDone = t.status === 'concluida';
         const due = t.due_date ? new Date(t.due_date).toLocaleDateString('pt-PT',{day:'2-digit',month:'2-digit'}) : '';
-        const late = !done && t.due_date && t.due_date < today;
+        const late = !isDone && t.due_date && t.due_date < today;
         const ini = (t.assigned_to || 'T').substring(0,1).toUpperCase();
-        return `<div class="task-item"><div class="task-chk ${done?'done':''}"></div><div class="task-txt ${done?'done':''}">${t.title||t.titulo||t.name||'Tarefa'}</div><div class="task-av" style="background:var(--orange)">${ini}</div><div class="task-due" style="${late?'color:var(--danger)':''}">${done?'Feito':due||''}</div></div>`;
+        return `<div class="task-item"><div class="task-chk ${isDone?'done':''}"></div><div class="task-txt ${isDone?'done':''}">${esc(t.title||'Tarefa')}</div><div class="task-av" style="background:var(--orange)">${ini}</div><div class="task-due" style="${late?'color:var(--danger)':''}">${isDone?'✓':due||''}</div></div>`;
       }).join('');
     }
   }
@@ -2470,12 +2481,70 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(window.loadDashboard, 800);
 });
 
+// === ANALYTICS LOADER ===
+window.loadAnalytics = async function() {
+  try {
+    const [dc, do_, dt] = await Promise.all([
+      apiFetch('/contacts').catch(()=>({contacts:[]})),
+      apiFetch('/opportunities').catch(()=>({opportunities:[]})),
+      apiFetch('/tasks').catch(()=>({tasks:[]}))
+    ]);
+    const contacts = dc.contacts || [];
+    const opps = do_.opportunities || [];
+    const tasks = dt.tasks || [];
+
+    const wonOpps = opps.filter(o => o.stage === 'closed');
+    const revenue = wonOpps.reduce((s,o) => s + parseFloat(o.value||0), 0);
+    const conv = opps.length > 0 ? (wonOpps.length / opps.length * 100).toFixed(1) + '%' : '0%';
+    const ticket = wonOpps.length > 0 ? '€' + (revenue / wonOpps.length).toLocaleString('pt-PT', {maximumFractionDigits:0}) : '—';
+
+    const setEl = (id, val) => { const e = document.getElementById(id); if(e) e.textContent = val; };
+    setEl('anaRevenue', revenue > 0 ? '€' + revenue.toLocaleString('pt-PT') : '€0');
+    setEl('anaLeads', contacts.length);
+    setEl('anaConv', conv);
+    setEl('anaTicket', ticket);
+
+    // Performance by user — group closed deals
+    const byUser = {};
+    wonOpps.forEach(o => {
+      const u = o.assigned_to || 'Sem atribuição';
+      if (!byUser[u]) byUser[u] = 0;
+      byUser[u] += parseFloat(o.value || 0);
+    });
+    const anaByUser = document.getElementById('anaByUser');
+    if (anaByUser) {
+      const sorted = Object.entries(byUser).sort((a,b) => b[1]-a[1]);
+      const maxVal = sorted[0]?.[1] || 1;
+      const colors = ['var(--orange)','#3498DB','#9B59B6','#2ECC71','#F39C12'];
+      if (sorted.length === 0) {
+        anaByUser.innerHTML = '<div style="color:var(--text3);font-size:12.5px;text-align:center;padding:12px 0;">Sem negócios fechados ainda. Os dados aparecem quando existirem negócios na fase "Fechado" no Pipeline.</div>';
+      } else {
+        anaByUser.innerHTML = sorted.slice(0,5).map(([u,v],i) => `
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <div class="uav" style="background:${colors[i%colors.length]}">${ini2(u)}</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;">${esc(u)}</div>
+              <div class="prog-bar" style="margin-top:4px;"><div class="prog-fill" style="width:${Math.round(v/maxVal*100)}%;background:${colors[i%colors.length]};transition:width 1s;"></div></div>
+            </div>
+            <div style="font-size:14px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:${colors[i%colors.length]};">€${(v/1000).toFixed(0)}k</div>
+          </div>`).join('');
+      }
+    }
+  } catch(e) { console.warn('Analytics load error:', e.message); }
+};
+
 // === OVERRIDE go() ===
 (function(){
   const _orig=window.go;
   window.go=function(id,el){
     _orig(id,el);
-    const loaders={crm:()=>loadContacts(),pipeline:()=>loadPipeline(),tasks:()=>loadTasks(),campaigns:()=>loadCampaigns()};
+    const loaders={
+      crm:()=>loadContacts(),
+      pipeline:()=>loadPipeline(),
+      tasks:()=>loadTasks(),
+      campaigns:()=>loadCampaigns(),
+      analytics:()=>loadAnalytics()
+    };
     if(loaders[id])setTimeout(loaders[id],120);
   };
 })();
@@ -2644,78 +2713,20 @@ window.openIntegrations = async function() {
   });
 };
 
-// ── Clear demo data from views when in real API mode ─────────────────
+// ── Email contacts count from real API ───────────────────────────────
 (function() {
-  const EMPTY_CRM_DETAIL = `
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;color:var(--text3);text-align:center;padding:40px;">
-      <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="margin-bottom:16px;opacity:.4;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:6px;">Selecione um contacto</div>
-      <div style="font-size:12px;">ou crie um novo clicando em "+ Novo Contacto"</div>
-    </div>`;
-
-  function clearDemoFromView(viewId) {
+  const _origBootAuth = window.bootAuth;
+  window.bootAuth = async function() {
+    if (_origBootAuth) await _origBootAuth();
+    // After login, populate email contact count
     const tk = localStorage.getItem('lxgest_api_token_v1');
-    if (!tk || tk === 'demo-mode') return;
-
-    if (viewId === 'crm') {
-      const list = document.getElementById('crmContactList');
-      if (list) list.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:16px;text-align:center;">A carregar...</div>';
-      const view = document.getElementById('v-crm');
-      if (view) {
-        const panels = view.querySelectorAll('.crm-detail, [class*="crm-right"], [class*="contact-detail"]');
-        panels.forEach(p => { p.innerHTML = EMPTY_CRM_DETAIL; });
-        const allPanels = view.querySelectorAll('.panel');
-        allPanels.forEach(p => {
-          if (p.querySelector('.act-av') || p.querySelector('[class*="timeline"]') || p.querySelector('.ai-head')) {
-            const timeline = p.querySelector('.act-list, [class*="timeline-list"], [class*="act-list"]');
-            if (timeline) timeline.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">Sem atividades registadas.</div>';
-          }
-        });
-      }
+    if (tk && tk !== 'demo-mode') {
+      try {
+        const d = await apiFetch('/contacts');
+        const el = document.getElementById('emContacts');
+        if (el) el.textContent = (d.contacts || []).length;
+      } catch(e) {}
     }
-
-    if (viewId === 'pipeline') {
-      const board = document.getElementById('kanbanBoard');
-      if (board) board.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;min-height:300px;color:var(--text3);">A carregar...</div>';
-    }
-
-    if (viewId === 'campaigns') {
-      const list = document.getElementById('campaignList');
-      if (list) list.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:16px;text-align:center;">A carregar...</div>';
-    }
-
-    if (viewId === 'tasks') {
-      const list = document.getElementById('taskList');
-      if (list) list.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:16px;text-align:center;">A carregar...</div>';
-    }
-
-    if (viewId === 'whatsapp') {
-      const view = document.getElementById('v-whatsapp');
-      if (view) {
-        const mainArea = view.querySelector('[class*="wa-main"], [class*="chat-area"]');
-        if (mainArea) {
-          mainArea.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;min-height:400px;color:var(--text3);text-align:center;flex-direction:column;gap:12px;"><svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="opacity:.4;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><div style="font-size:14px;font-weight:600;color:var(--text2);">WhatsApp não configurado</div><div style="font-size:12px;">Aceda a <span style="color:var(--orange);cursor:pointer;" onclick="openIntegrations()">Integrações</span> para configurar</div></div>`;
-        }
-      }
-    }
-
-    if (viewId === 'email') {
-      const view = document.getElementById('v-email');
-      if (view) {
-        const metricsPanel = view.querySelector('[class*="metrics"], [class*="email-metrics"]');
-        if (metricsPanel) {
-          const vals = metricsPanel.querySelectorAll('[class*="metric-val"], [class*="mb-val"]');
-          vals.forEach(v => { if (v.textContent.match(/^\d+\.?\d*%?$/)) v.textContent = '—'; });
-        }
-      }
-    }
-  }
-
-  // Patch go() to clear demo content when switching views
-  const _existingGo = window.go;
-  window.go = function(id, el) {
-    clearDemoFromView(id);
-    _existingGo(id, el);
   };
 })();
 </script>
