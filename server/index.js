@@ -14,7 +14,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
-app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'LXGest CRM API', ts: new Date().toISOString() }));
+app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'LXGest CRM API', version: '2.0.0', ts: new Date().toISOString() }));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/contacts', require('./routes/contacts'));
