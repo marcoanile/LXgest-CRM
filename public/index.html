@@ -766,33 +766,33 @@ window.LXGEST_WHATSAPP_CONFIG = {
   <!-- ══════════ DASHBOARD ══════════ -->
   <div class="view active" id="v-dashboard">
     <div class="greeting-row">
-      <div class="greet"><h1>Bom dia, <span class="hl" id="dashUserName">...</span> 👋</h1><p>Quarta-feira, 14 Maio 2025 · 3 reuniões hoje</p></div>
+      <div class="greet"><h1>Bom dia, <span class="hl" id="dashUserName">...</span> 👋</h1><p id="dashDateLine">A carregar...</p></div>
       <div class="date-chip"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Semana 20 · Q2 2025</div>
     </div>
 
     <div class="stats-grid">
       <div class="stat accent">
         <div class="stat-top"><div><div class="stat-label">Receita do Mês</div></div><div class="stat-ico"><svg fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
-        <div class="stat-val"><span class="curr">€</span>84.320</div>
+        <div class="stat-val"><span class="curr">€</span><span id="dashRevenue">—</span></div>
         <div class="stat-chg up">↑ +12.4% vs mês anterior</div>
         <svg class="sparkline" viewBox="0 0 80 38"><polyline points="0,32 12,26 24,30 36,18 48,20 60,12 72,8 80,10" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
       <div class="stat">
         <div class="stat-top"><div><div class="stat-label">Novos Leads</div></div><div class="stat-ico"><svg fill="none" viewBox="0 0 24 24" stroke="var(--info)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div></div>
-        <div class="stat-val">247</div>
+        <div class="stat-val" id="dashLeads">—</div>
         <div class="stat-chg up">↑ +8.1% esta semana</div>
         <svg class="sparkline" viewBox="0 0 80 38"><polyline points="0,34 12,28 24,30 36,22 48,18 60,20 72,14 80,16" fill="none" stroke="var(--info)" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
       <div class="stat">
         <div class="stat-top"><div><div class="stat-label">Taxa Conversão</div></div><div class="stat-ico"><svg fill="none" viewBox="0 0 24 24" stroke="var(--success)" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div></div>
-        <div class="stat-val">34.2<span class="curr">%</span></div>
+        <div class="stat-val"><span id="dashConv">—</span><span class="curr">%</span></div>
         <div class="stat-chg up">↑ +2.8pp vs meta</div>
         <svg class="sparkline" viewBox="0 0 80 38"><polyline points="0,35 12,30 24,28 36,24 48,22 60,18 72,16 80,14" fill="none" stroke="var(--success)" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
       <div class="stat">
         <div class="stat-top"><div><div class="stat-label">Negócios Ativos</div></div><div class="stat-ico"><svg fill="none" viewBox="0 0 24 24" stroke="var(--warn)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div></div>
-        <div class="stat-val">58</div>
-        <div class="stat-chg dn">↓ -3 vs semana passada</div>
+        <div class="stat-val" id="dashDeals">—</div>
+        <div class="stat-chg" id="dashDealsChg"></div>
         <svg class="sparkline" viewBox="0 0 80 38"><polyline points="0,14 12,18 24,16 36,22 48,22 60,20 72,24 80,26" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
     </div>
@@ -871,20 +871,14 @@ window.LXGEST_WHATSAPP_CONFIG = {
       <div style="display:flex;flex-direction:column;gap:14px;">
         <div class="panel">
           <div class="ph"><div><div class="pt">Atividade Recente</div></div><span class="pact">Ver tudo</span></div>
-          <div class="act-list">
-            <div class="act-item"><div class="act-av" style="background:linear-gradient(135deg,var(--orange),#b85a12)">MA</div><div class="act-body"><div class="act-txt"><strong>Maria Alves</strong> fechou negócio com Imobiliária Norte</div><div class="act-meta">€12.500 · CRM Pipeline</div></div><div class="act-time">2m</div></div>
-            <div class="act-item"><div class="act-av" style="background:linear-gradient(135deg,#3498DB,#1a6fa8)">RC</div><div class="act-body"><div class="act-txt"><strong>Rui Costa</strong> criou 5 leads via Prospecção IA</div><div class="act-meta">Lisboa · B2B Tech</div></div><div class="act-time">18m</div></div>
-            <div class="act-item"><div class="act-av" style="background:#25D366">WA</div><div class="act-body"><div class="act-txt">Campanha <strong>WhatsApp #14</strong> — 420 msgs</div><div class="act-meta">94% entregue · 38% resposta</div></div><div class="act-time">42m</div></div>
-            <div class="act-item"><div class="act-av" style="background:#9B59B6">JS</div><div class="act-body"><div class="act-txt"><strong>João Santos</strong> agendou reunião com Grupotec</div><div class="act-meta">Hoje 15h00 · Zoom</div></div><div class="act-time">1h</div></div>
+          <div class="act-list" id="dashActivityList">
+            <div style="color:var(--text3);font-size:13px;padding:16px 0;text-align:center;">A carregar...</div>
           </div>
         </div>
         <div class="panel">
           <div class="ph"><div><div class="pt">Tarefas de Hoje</div><div class="ps">3 de 8 concluídas</div></div><span class="pact" onclick="go('tasks',document.querySelector('[onclick*=tasks]'))">Gestão →</span></div>
-          <div>
-            <div class="task-item"><div class="task-chk done"></div><div class="task-txt done">Enviar proposta Tecnilab Lda</div><div class="task-av" style="background:var(--orange)">JF</div><div class="task-due">Feito</div></div>
-            <div class="task-item"><div class="task-chk"></div><div class="task-txt">Follow-up Construções Mário</div><div class="task-av" style="background:#3498DB">RC</div><div class="task-due" style="color:var(--danger);">Atrasado</div></div>
-            <div class="task-item"><div class="task-chk"></div><div class="task-txt">Preparar relatório mensal Q2</div><div class="task-av" style="background:#9B59B6">MA</div><div class="task-due">18h00</div></div>
-            <div class="task-item"><div class="task-chk"></div><div class="task-txt">Reunião equipa comercial</div><div class="task-av" style="background:var(--orange)">JF</div><div class="task-due">15h00</div></div>
+          <div id="dashTaskList">
+            <div style="color:var(--text3);font-size:13px;padding:16px 0;text-align:center;">A carregar...</div>
           </div>
         </div>
         <div class="panel">
@@ -2360,6 +2354,121 @@ window.delCampaign=async function(id,name){
   try{await apiFetch('/campaigns/'+id,{method:'DELETE'});showToast('Campanha apagada');loadCampaigns();}
   catch(e){alert('Erro: '+e.message);}
 };
+
+// ── Dashboard real data ──────────────────────────────────────────
+window.loadDashboard = async function() {
+  const tk = localStorage.getItem('lxgest_api_token_v1');
+  if (!tk || tk === 'demo-mode') return;
+
+  // Date line
+  const dl = document.getElementById('dashDateLine');
+  if (dl) {
+    const now = new Date();
+    const days = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+    const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    dl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  }
+
+  const h = { 'Authorization': 'Bearer ' + tk, 'Content-Type': 'application/json' };
+
+  // Load contacts
+  let contacts = [];
+  try {
+    const r = await fetch('/contacts', { headers: h });
+    if (r.ok) { const d = await r.json(); contacts = d.contacts || []; }
+  } catch(e) {}
+
+  // Load opportunities
+  let opps = [];
+  try {
+    const r = await fetch('/opportunities', { headers: h });
+    if (r.ok) { const d = await r.json(); opps = d.opportunities || []; }
+  } catch(e) {}
+
+  // Load tasks
+  let tasks = [];
+  try {
+    const r = await fetch('/tasks', { headers: h });
+    if (r.ok) { const d = await r.json(); tasks = d.tasks || []; }
+  } catch(e) {}
+
+  // Contacts stat
+  const dlEl = document.getElementById('dashLeads');
+  if (dlEl) dlEl.textContent = contacts.length;
+
+  // Deals stat
+  const activeOpps = opps.filter(o => o.status !== 'fechado_ganho' && o.status !== 'fechado_perdido');
+  const ddEl = document.getElementById('dashDeals');
+  if (ddEl) ddEl.textContent = activeOpps.length;
+
+  // Revenue stat (sum of won opportunities)
+  const wonOpps = opps.filter(o => o.status === 'fechado_ganho');
+  const revenue = wonOpps.reduce((s, o) => s + parseFloat(o.value || o.valor || 0), 0);
+  const drEl = document.getElementById('dashRevenue');
+  if (drEl) drEl.textContent = revenue > 0 ? revenue.toLocaleString('pt-PT') : '0';
+
+  // Conversion rate
+  const conv = opps.length > 0 ? Math.round((wonOpps.length / opps.length) * 100) : 0;
+  const dcEl = document.getElementById('dashConv');
+  if (dcEl) dcEl.textContent = conv;
+
+  // Activity list — show recent contacts
+  const al = document.getElementById('dashActivityList');
+  if (al) {
+    if (contacts.length === 0 && opps.length === 0) {
+      al.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:16px 0;text-align:center;">Sem atividade recente. Adicione contactos e negócios para começar.</div>';
+    } else {
+      const items = [];
+      contacts.slice(0, 3).forEach(c => {
+        const ini = (c.name || c.nome || '?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+        const colors = ['#E8731A','#3498DB','#9B59B6','#27AE60','#E74C3C'];
+        const col = colors[items.length % colors.length];
+        const when = c.created_at ? new Date(c.created_at).toLocaleDateString('pt-PT') : '';
+        items.push(`<div class="act-item"><div class="act-av" style="background:${col}">${ini}</div><div class="act-body"><div class="act-txt"><strong>${c.name||c.nome||'Contacto'}</strong> adicionado ao CRM</div><div class="act-meta">${c.company||c.empresa||c.email||''}</div></div><div class="act-time">${when}</div></div>`);
+      });
+      opps.slice(0, 2).forEach(o => {
+        const name = o.name || o.nome || o.title || o.titulo || 'Negócio';
+        const val = o.value || o.valor || 0;
+        items.push(`<div class="act-item"><div class="act-av" style="background:var(--orange)">NE</div><div class="act-body"><div class="act-txt">Negócio <strong>${name}</strong></div><div class="act-meta">${val ? '€' + parseFloat(val).toLocaleString('pt-PT') + ' · Pipeline' : 'Pipeline'}</div></div><div class="act-time"></div></div>`);
+      });
+      al.innerHTML = items.slice(0,4).join('') || '<div style="color:var(--text3);font-size:13px;padding:16px 0;text-align:center;">Sem atividade recente.</div>';
+    }
+  }
+
+  // Tasks list — show today's tasks
+  const tl = document.getElementById('dashTaskList');
+  if (tl) {
+    if (tasks.length === 0) {
+      tl.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:16px 0;text-align:center;">Sem tarefas. <span style="color:var(--orange);cursor:pointer;" onclick="go(\'tasks\',null);setTimeout(openNewTaskModal,150)">+ Nova tarefa</span></div>';
+    } else {
+      const today = new Date().toISOString().slice(0,10);
+      const shown = tasks.slice(0,4);
+      tl.innerHTML = shown.map(t => {
+        const done = t.status === 'concluida';
+        const due = t.due_date ? new Date(t.due_date).toLocaleDateString('pt-PT',{day:'2-digit',month:'2-digit'}) : '';
+        const late = !done && t.due_date && t.due_date < today;
+        const ini = (t.assigned_to || 'T').substring(0,1).toUpperCase();
+        return `<div class="task-item"><div class="task-chk ${done?'done':''}"></div><div class="task-txt ${done?'done':''}">${t.title||t.titulo||t.name||'Tarefa'}</div><div class="task-av" style="background:var(--orange)">${ini}</div><div class="task-due" style="${late?'color:var(--danger)':''}">${done?'Feito':due||''}</div></div>`;
+      }).join('');
+    }
+  }
+};
+
+// Patch go() to also load dashboard when switching to it
+(function(){
+  const _origGo = window.go;
+  if (_origGo) {
+    window.go = function(id, el) {
+      _origGo(id, el);
+      if (id === 'dashboard') setTimeout(window.loadDashboard, 150);
+    };
+  }
+})();
+
+// Load dashboard on boot
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(window.loadDashboard, 800);
+});
 
 // === OVERRIDE go() ===
 (function(){
