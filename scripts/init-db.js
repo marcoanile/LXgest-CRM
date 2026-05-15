@@ -122,6 +122,17 @@ async function main() {
     on contacts(lower(email)) where email is not null
   `);
 
+  await pool.query(`
+    create table if not exists settings (
+      id serial primary key,
+      key text unique not null,
+      value text,
+      is_secret boolean default true,
+      created_at timestamptz default now(),
+      updated_at timestamptz default now()
+    )
+  `);
+
   console.log('Database schema is ready.');
 }
 

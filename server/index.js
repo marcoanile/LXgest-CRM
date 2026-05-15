@@ -25,6 +25,7 @@ app.use('/api/prospecting', require('./routes/prospecting'));
 app.use('/api/email', require('./routes/email'));
 app.use('/api/whatsapp', require('./routes/whatsapp'));
 app.use('/api/social', require('./routes/social'));
+app.use('/api/settings', require('./routes/settings'));
 app.use('/api', require('./routes/generic'));
 
 app.use(express.static(path.join(__dirname, '..', 'public')));

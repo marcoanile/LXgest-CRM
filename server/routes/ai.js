@@ -6,13 +6,20 @@ const { audit } = require('../utils/audit');
 const router = express.Router();
 router.use(requireAuth);
 
-function getClient() {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    const err = new Error('ANTHROPIC_API_KEY não configurada no Render. Adicione a chave Anthropic nas variáveis de ambiente.');
+const { getSettingVal } = require('./settings');
+
+async function getApiKey() {
+  return (await getSettingVal('ANTHROPIC_API_KEY')) || null;
+}
+
+async function getClient() {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    const err = new Error('ANTHROPIC_API_KEY não configurada. Aceda a Integrações no menu para configurar.');
     err.status = 503;
     throw err;
   }
-  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return new Anthropic({ apiKey });
 }
 
 const SYSTEM_PROMPTS = {
@@ -36,7 +43,7 @@ router.post('/chat', async (req, res) => {
     const { message, mode = 'assistant', context = {}, messages = [] } = req.body;
     if (!message || typeof message !== 'string') return res.status(400).json({ error: 'Mensagem em falta.' });
 
-    const client = getClient();
+    const client = await getClient();
     const model = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
     const system = SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.assistant;
     const fullSystem = system + `\n\nContexto: ${JSON.stringify({ user: req.user, context }).slice(0, 2000)}`;
@@ -61,7 +68,7 @@ router.post('/generate', async (req, res) => {
   try {
     const { type = 'email', prompt, audience, goal, tone = 'profissional' } = req.body;
     if (!prompt) return res.status(400).json({ error: 'Prompt em falta.' });
-    const client = getClient();
+    const client = await getClient();
     const model = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
     const system = SYSTEM_PROMPTS[type] || SYSTEM_PROMPTS.assistant;
     const userMsg = `Tipo: ${type}\nPúblico: ${audience || 'B2B Portugal'}\nObjetivo: ${goal || 'conversão comercial'}\nTom: ${tone}\nPedido: ${prompt}`;
