@@ -766,7 +766,7 @@ window.LXGEST_WHATSAPP_CONFIG = {
   <!-- ══════════ DASHBOARD ══════════ -->
   <div class="view active" id="v-dashboard">
     <div class="greeting-row">
-      <div class="greet"><h1>Bom dia, <span class="hl">João</span> 👋</h1><p>Quarta-feira, 14 Maio 2025 · 3 reuniões hoje</p></div>
+      <div class="greet"><h1>Bom dia, <span class="hl" id="dashUserName">...</span> 👋</h1><p>Quarta-feira, 14 Maio 2025 · 3 reuniões hoje</p></div>
       <div class="date-chip"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Semana 20 · Q2 2025</div>
     </div>
 
@@ -931,9 +931,9 @@ window.LXGEST_WHATSAPP_CONFIG = {
   <div class="view" id="v-crm">
     <div class="crm-grid">
       <div class="panel">
-        <div class="ph"><div class="pt">Contactos</div><span class="pact">+ Novo</span></div>
-        <div style="padding:10px 12px;border-bottom:1px solid var(--border);"><div class="wa-si" style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 12px;"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="var(--text3)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input style="background:none;border:none;outline:none;color:var(--text1);font-size:13px;width:100%;" placeholder="Pesquisar contacto..."></div></div>
-        <div class="contact-list">
+        <div class="ph"><div class="pt">Contactos</div><span class="pact" id="btnNewContact" onclick="openNewContactModal()" style="cursor:pointer;">+ Novo Contacto</span></div>
+        <div style="padding:10px 12px;border-bottom:1px solid var(--border);"><div class="wa-si" style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 12px;"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="var(--text3)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input style="background:none;border:none;outline:none;color:var(--text1);font-size:13px;width:100%;" placeholder="Pesquisar contacto..." id="crmSearch"></div></div>
+        <div class="contact-list" id="crmContactList">
           <div class="contact-item sel"><div class="c-av" style="background:linear-gradient(135deg,var(--orange),#b85a12)">TL</div><div><div class="c-name">Tecnilab Lda</div><div class="c-co">Lisboa · B2B Tech</div></div></div>
           <div class="contact-item"><div class="c-av" style="background:linear-gradient(135deg,#3498DB,#1a6fa8)">GT</div><div><div class="c-name">Grupotec SA</div><div class="c-co">Porto · Indústria</div></div></div>
           <div class="contact-item"><div class="c-av" style="background:linear-gradient(135deg,var(--success),#1a8f4a)">MG</div><div><div class="c-name">Medigest Lda</div><div class="c-co">Braga · Saúde</div></div></div>
@@ -990,9 +990,9 @@ window.LXGEST_WHATSAPP_CONFIG = {
   <div class="view" id="v-pipeline">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
       <div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Pipeline de Vendas</div><div style="font-size:12px;color:var(--text3);margin-top:2px;">58 negócios activos · €284.600 potencial total</div></div>
-      <div style="display:flex;gap:8px;"><div style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12.5px;color:var(--text2);cursor:pointer;">Filtrar ▾</div><div style="background:var(--orange);border-radius:8px;padding:8px 14px;font-size:12.5px;color:#fff;font-weight:600;cursor:pointer;">+ Novo Negócio</div></div>
+      <div style="display:flex;gap:8px;"><div style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12.5px;color:var(--text2);cursor:pointer;">Filtrar ▾</div><div style="background:var(--orange);border-radius:8px;padding:8px 14px;font-size:12.5px;color:#fff;font-weight:600;cursor:pointer;" id="btnNewDeal" onclick="openNewDealModal()">+ Novo Negócio</div></div>
     </div>
-    <div class="kanban">
+    <div class="kanban" id="kanbanBoard">
       <div class="k-col"><div class="k-head"><span class="k-title" style="color:#3498DB;">🔍 Prospeção</span><span class="k-count" style="color:#3498DB;background:rgba(52,152,219,.15);">24</span></div><div class="k-cards">
         <div class="k-card"><div class="k-card-company">TechFirm Lda</div><div class="k-card-val">€5.200</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:#3498DB">RC</div></div><span class="k-prob" style="color:#3498DB;">15%</span></div></div>
         <div class="k-card"><div class="k-card-company">Startly SA</div><div class="k-card-val">€8.900</div><div class="k-card-ft"><div class="k-card-usr"><div class="k-uav" style="background:var(--orange)">JF</div></div><span class="k-prob" style="color:#3498DB;">10%</span></div></div>
@@ -1116,7 +1116,7 @@ window.LXGEST_WHATSAPP_CONFIG = {
   <div class="view" id="v-campaigns">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
       <div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Campanhas de Marketing</div><div style="font-size:12px;color:var(--text3);">3 ativas · 2 em rascunho</div></div>
-      <div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;">+ Nova Campanha</div>
+      <div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" id="btnNewCampaign" onclick="openNewCampaignModal()">+ Nova Campanha</div>
     </div>
     <div class="camp-grid">
       <div class="camp-card"><div class="camp-banner" style="background:linear-gradient(135deg,var(--orange),#c45e12);"><span style="font-size:32px;opacity:.3;position:absolute;">📧</span></div><div class="camp-info"><div class="camp-name">Newsletter Maio 2025</div><div class="camp-type">Email Marketing · Enviada a 12 Mai</div><div class="camp-stats"><div class="cs"><div class="cs-val" style="color:var(--orange);">47%</div><div class="cs-lbl">Abertura</div></div><div class="cs"><div class="cs-val" style="color:var(--info);">12%</div><div class="cs-lbl">Cliques</div></div><div class="cs"><div class="cs-val" style="color:var(--success);">3.2%</div><div class="cs-lbl">Conversão</div></div></div><span class="badge bg2">Concluída</span></div></div>
@@ -1190,7 +1190,7 @@ window.LXGEST_WHATSAPP_CONFIG = {
 
   <!-- ══════════ TASKS ══════════ -->
   <div class="view" id="v-tasks">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Gestão de Tarefas</div><div style="font-size:12px;color:var(--text3);">Equipa LXGest · Maio 2025</div></div><div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;">+ Nova Tarefa</div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div><div style="font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;">Gestão de Tarefas</div><div style="font-size:12px;color:var(--text3);">Equipa LXGest · Maio 2025</div></div><div style="background:var(--orange);border-radius:8px;padding:9px 16px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" id="btnNewTask" onclick="openNewTaskModal()">+ Nova Tarefa</div></div>
     <div class="tasks-grid">
       <div class="tasks-col"><div class="tc-head"><span class="tc-title"><span class="tc-dot" style="background:#546070;"></span>A Fazer</span><span class="tc-count">4</span></div><div class="tc-cards">
         <div class="tc-card"><div class="tc-card-title">Preparar relatório Q2</div><div class="tc-card-desc">Relatório completo de performance do segundo trimestre 2025.</div><div class="tc-card-ft"><span class="tc-prio prio-high">Alta</span><div class="task-av" style="background:#9B59B6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">MA</div></div></div>
@@ -1509,9 +1509,7 @@ function getUsers(){
     try { return JSON.parse(stored); } catch(e) { localStorage.removeItem(USERS_KEY); }
   }
   const base = [
-    {name:'Marco Anile', email:MASTER_EMAIL, password:MASTER_PASSWORD, role:'Administrador Master', active:true, master:true},
-    {name:'João Ferreira', email:'joao.ferreira@lxgest.com', password:'demo123', role:'Administrador', active:true},
-    {name:'Ana Silva', email:'ana.silva@lxgest.com', password:'demo123', role:'Marketing', active:true}
+    {name:'Marco Anile', email:MASTER_EMAIL, password:MASTER_PASSWORD, role:'Administrador Master', active:true, master:true}
   ];
   localStorage.setItem(USERS_KEY, JSON.stringify(base));
   return base;
@@ -1524,6 +1522,7 @@ function applySession(user){
   document.getElementById('currentAvatar').textContent = initials(user.name);
   document.getElementById('currentUserName').textContent = user.name;
   document.getElementById('currentUserRole').textContent = user.role + ' · LXGest';
+  const dn=document.getElementById('dashUserName'); if(dn) dn.textContent=(user.name||'').split(' ')[0];
   renderUsers();
   animateBars();
   buildCalendar();
@@ -1783,7 +1782,7 @@ async function apiFetch(path, options = {}) {
   const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
   if (token) headers.Authorization = 'Bearer ' + token;
   if (token === 'demo-mode') {
-    if (path === '/integrations/status') return { openai:false, whatsapp:false, email:false, prospecting:false, social:false, note:'Modo protótipo local. Publique no Render para APIs reais.' };
+    if (path === '/integrations/status') return { integrations: {claude:false, whatsapp:false, resend:false} };
     if (path === '/users') return { users: getUsers ? getUsers() : [] };
   }
   const res = await fetch(API_BASE + path, { ...options, headers });
@@ -1991,12 +1990,12 @@ window.loadIntegrationStatus = async function(){
     const data = await apiFetch('/integrations/status');
     const st = data.integrations || {};
     const ok = v => v ? '<span class="badge bg2">Configurado</span>' : '<span class="badge br">Falta chave</span>';
-    document.getElementById('stOpenai').textContent = st.openai ? 'OK' : 'OFF';
+    document.getElementById('stOpenai').textContent = st.claude ? 'OK' : 'OFF';
     document.getElementById('stWhatsapp').textContent = st.whatsapp ? 'OK' : 'OFF';
     document.getElementById('stProspecting').textContent = (st.apollo || st.googlePlaces) ? 'OK' : 'OFF';
     document.getElementById('stEmail').textContent = st.resend ? 'OK' : 'OFF';
     if(list) list.innerHTML = `
-      <div class="integration-row"><div class="map-left"><div class="map-icon">🤖</div><div><div class="map-title">OpenAI / GPT</div><div class="map-meta">Assistente IA, geração de emails, scoring e chatbot</div></div></div>${ok(st.openai)}</div>
+      <div class="integration-row"><div class="map-left"><div class="map-icon">🤖</div><div><div class="map-title">OpenAI / GPT</div><div class="map-meta">Assistente IA, geração de emails, scoring e chatbot</div></div></div>${ok(st.claude)}</div>
       <div class="integration-row"><div class="map-left"><div class="map-icon">🟢</div><div><div class="map-title">WhatsApp Business Cloud API</div><div class="map-meta">WHATSAPP_TOKEN + WHATSAPP_PHONE_NUMBER_ID</div></div></div>${ok(st.whatsapp)}</div>
       <div class="integration-row"><div class="map-left"><div class="map-icon">🔍</div><div><div class="map-title">Apollo / Google Places</div><div class="map-meta">Busca empresas reais por setor e localização</div></div></div>${ok(st.apollo || st.googlePlaces)}</div>
       <div class="integration-row"><div class="map-left"><div class="map-icon">📧</div><div><div class="map-title">Hunter Email Enrichment</div><div class="map-meta">Enriquecimento de emails públicos por domínio</div></div></div>${ok(st.hunter)}</div>
@@ -2007,8 +2006,8 @@ window.loadIntegrationStatus = async function(){
 };
 
 window.testAI = async function(){
-  try{ const data = await apiFetch('/ai/chat', { method:'POST', body: JSON.stringify({ message:'Confirma que a IA da LXGest está operacional em uma frase.', mode:'assistant' }) }); showToast('GPT OK: ' + (data.answer || '').slice(0,80)); }
-  catch(ex){ showToast('GPT não configurado: ' + ex.message); }
+  try{ const data = await apiFetch('/ai/chat', { method:'POST', body: JSON.stringify({ message:'Confirma que a IA da LXGest está operacional em uma frase.', mode:'assistant' }) }); showToast('Claude OK: ' + (data.answer || '').slice(0,80)); }
+  catch(ex){ showToast('Claude IA: ' + ex.message); }
 };
 
 window.testLeadSearch = function(){
@@ -2017,6 +2016,379 @@ window.testLeadSearch = function(){
 };
 
 window.addEventListener('DOMContentLoaded', () => { setTimeout(window.bootAuth, 50); setTimeout(()=>{ try{ loadIntegrationStatus(); }catch(e){} }, 900); });
+</script>
+
+
+<style>
+.lx-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;display:flex;align-items:center;justify-content:center;}
+.lx-modal{background:var(--g800,#1a2030);border:1px solid var(--border,#2a3545);border-radius:14px;padding:28px;width:min(500px,94vw);max-height:90vh;overflow-y:auto;}
+.lx-modal h3{margin:0 0 20px;font-size:16px;font-weight:700;color:var(--text1,#e8eaf0);}
+.lx-field{margin-bottom:14px;}
+.lx-field label{display:block;font-size:11.5px;color:var(--text3,#6b7a90);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+.lx-field input,.lx-field select,.lx-field textarea{width:100%;background:var(--g750,#21293b);border:1px solid var(--border,#2a3545);border-radius:8px;padding:9px 12px;color:var(--text1,#e8eaf0);font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;}
+.lx-field input:focus,.lx-field select:focus,.lx-field textarea:focus{border-color:var(--orange,#E8731A);}
+.lx-row{display:flex;gap:10px;}
+.lx-row .lx-field{flex:1;}
+.lx-btns{display:flex;gap:10px;margin-top:20px;}
+.lx-btn-primary{background:var(--orange,#E8731A);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:13.5px;font-weight:700;cursor:pointer;}
+.lx-btn-cancel{background:var(--g750,#21293b);color:var(--text2,#a0aab8);border:1px solid var(--border,#2a3545);border-radius:8px;padding:10px 18px;font-size:13.5px;cursor:pointer;font-family:inherit;}
+.lx-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border,#2a3545);transition:background .15s;}
+.lx-item:hover{background:var(--g750,#21293b);}
+.lx-item:last-child{border-bottom:none;}
+.lx-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.lx-info{flex:1;min-width:0;}
+.lx-name{font-size:13.5px;font-weight:600;color:var(--text1,#e8eaf0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lx-meta{font-size:11.5px;color:var(--text3,#6b7a90);margin-top:2px;}
+.lx-actions{display:flex;gap:6px;flex-shrink:0;}
+.lx-act{background:none;border:1px solid var(--border,#2a3545);border-radius:6px;padding:5px 10px;font-size:11.5px;cursor:pointer;color:var(--text2,#a0aab8);font-family:inherit;}
+.lx-act:hover{border-color:var(--orange,#E8731A);color:var(--orange,#E8731A);}
+.lx-act.del:hover{border-color:#ff4d4d;color:#ff4d4d;}
+.lx-empty{padding:32px;text-align:center;color:var(--text3,#6b7a90);font-size:13px;}
+.lx-k-card{background:var(--g750,#21293b);border:1px solid var(--border,#2a3545);border-radius:10px;padding:12px;margin-bottom:8px;}
+.lx-k-card:hover{border-color:var(--orange,#E8731A);}
+.lx-k-title{font-size:13px;font-weight:600;color:var(--text1,#e8eaf0);margin-bottom:4px;}
+.lx-k-val{font-size:12.5px;color:var(--orange,#E8731A);font-weight:700;}
+.lx-k-foot{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text3,#6b7a90);}
+</style>
+
+<script>
+// === LXGEST FULL CRUD INTEGRATION ===
+const KANBAN_STAGES=[
+  {key:'prospection',label:'\uD83D\uDD0D Prospec\u00e7\u00e3o',color:'#3498DB'},
+  {key:'contact',label:'\uD83D\uDCDE Contacto',color:'#9B59B6'},
+  {key:'proposal',label:'\uD83D\uDCCB Proposta',color:'#E8731A'},
+  {key:'negotiation',label:'\uD83E\uDD1D Negocia\u00e7\u00e3o',color:'#F39C12'},
+  {key:'closed',label:'\u2705 Fechado',color:'#2ECC71'}
+];
+const AV_COLORS=['#E8731A','#3498DB','#9B59B6','#2ECC71','#F39C12','#E74C3C','#1ABC9C'];
+function avColor(s){return AV_COLORS[((s||'A').charCodeAt(0)-65+26)%AV_COLORS.length];}
+function ini2(s){return(s||'?').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'?';}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmtEur(v){return v?'\u20ac'+Number(v).toLocaleString('pt-PT'):'\u2014';}
+
+// === MODAL ===
+let _mCb=null;
+window.showModal=function(html,cb){
+  let ov=document.getElementById('lxOv');
+  if(!ov){ov=document.createElement('div');ov.id='lxOv';ov.className='lx-overlay';document.body.appendChild(ov);}
+  ov.innerHTML='<div class="lx-modal">'+html+'</div>';
+  ov.style.display='flex';_mCb=cb;
+  ov.onclick=e=>{if(e.target===ov)closeModal();};
+};
+window.closeModal=function(){const ov=document.getElementById('lxOv');if(ov)ov.style.display='none';_mCb=null;};
+window.submitModal=async function(){if(_mCb){try{await _mCb();}catch(e){alert(e.message);}}};
+
+// === CONTACTS ===
+window.loadContacts=async function(q){
+  const el=document.getElementById('crmContactList');if(!el)return;
+  try{
+    const d=await apiFetch('/contacts'+(q?'?q='+encodeURIComponent(q):''));
+    const cs=d.contacts||[];
+    if(!cs.length){el.innerHTML='<div class="lx-empty">Sem contactos. Clique em + Novo Contacto para criar.</div>';return;}
+    el.innerHTML=cs.map(c=>`<div class="lx-item">
+      <div class="lx-av" style="background:${avColor(c.name||c.company)}">${ini2(c.name||c.company)}</div>
+      <div class="lx-info">
+        <div class="lx-name">${esc(c.name||c.company||'Sem nome')}</div>
+        <div class="lx-meta">${esc([c.email,c.phone,c.company].filter(Boolean).join(' \u00b7 ')||c.status||'lead')}</div>
+      </div>
+      <div class="lx-actions">
+        <button class="lx-act" onclick="openEditContact('${c.id}')">Editar</button>
+        <button class="lx-act del" onclick="delContact('${c.id}','${esc(c.name||c.company||'')}')">Apagar</button>
+      </div></div>`).join('');
+  }catch(e){el.innerHTML='<div class="lx-empty">Erro: '+esc(e.message)+'</div>';}
+};
+
+window.openNewContactModal=function(){
+  showModal('<h3>Novo Contacto</h3>'
+    +'<div class="lx-row"><div class="lx-field"><label>Nome</label><input id="fc_name" placeholder="Nome completo"></div>'
+    +'<div class="lx-field"><label>Email</label><input id="fc_email" type="email" placeholder="email@empresa.pt"></div></div>'
+    +'<div class="lx-row"><div class="lx-field"><label>Telefone</label><input id="fc_phone" placeholder="+351 9xx xxx xxx"></div>'
+    +'<div class="lx-field"><label>Empresa</label><input id="fc_company" placeholder="Empresa Lda"></div></div>'
+    +'<div class="lx-row"><div class="lx-field"><label>Estado</label><select id="fc_status"><option value="lead">Lead</option><option value="prospect">Prospect</option><option value="customer">Cliente</option></select></div>'
+    +'<div class="lx-field"><label>Fonte</label><select id="fc_source"><option value="manual">Manual</option><option value="import">Importa\u00e7\u00e3o</option><option value="prospecting">Prospec\u00e7\u00e3o</option><option value="referral">Refer\u00eancia</option></select></div></div>'
+    +'<div class="lx-btns"><button class="lx-btn-primary" onclick="submitModal()">Criar Contacto</button><button class="lx-btn-cancel" onclick="closeModal()">Cancelar</button></div>',
+  async()=>{
+    const b={name:document.getElementById('fc_name').value.trim(),email:document.getElementById('fc_email').value.trim()||undefined,phone:document.getElementById('fc_phone').value.trim()||undefined,company:document.getElementById('fc_company').value.trim()||undefined,status:document.getElementById('fc_status').value,source:document.getElementById('fc_source').value};
+    if(!b.name&&!b.email&&!b.phone){alert('Preencha pelo menos nome, email ou telefone.');return;}
+    await apiFetch('/contacts',{method:'POST',body:JSON.stringify(b)});
+    closeModal();showToast('Contacto criado');loadContacts();
+  });
+};
+
+let _editContactData={};
+window.openEditContact=async function(id){
+  try{
+    const d=await apiFetch('/contacts?q=');
+    const c=(d.contacts||[]).find(x=>x.id===id)||{id};
+    _editContactData=c;
+    showModal('<h3>Editar Contacto</h3>'
+      +'<div class="lx-row"><div class="lx-field"><label>Nome</label><input id="ec_name" value="'+esc(c.name||'')+'"></div>'
+      +'<div class="lx-field"><label>Email</label><input id="ec_email" type="email" value="'+esc(c.email||'')+'"></div></div>'
+      +'<div class="lx-row"><div class="lx-field"><label>Telefone</label><input id="ec_phone" value="'+esc(c.phone||'')+'"></div>'
+      +'<div class="lx-field"><label>Empresa</label><input id="ec_company" value="'+esc(c.company||'')+'"></div></div>'
+      +'<div class="lx-field"><label>Estado</label><select id="ec_status">'
+      +['lead','prospect','customer'].map(s=>'<option value="'+s+'"'+(c.status===s?' selected':'')+'>'+{lead:'Lead',prospect:'Prospect',customer:'Cliente'}[s]+'</option>').join('')
+      +'</select></div>'
+      +'<div class="lx-btns"><button class="lx-btn-primary" onclick="submitModal()">Guardar</button><button class="lx-btn-cancel" onclick="closeModal()">Cancelar</button></div>',
+    async()=>{
+      const b={name:document.getElementById('ec_name').value.trim(),email:document.getElementById('ec_email').value.trim()||undefined,phone:document.getElementById('ec_phone').value.trim()||undefined,company:document.getElementById('ec_company').value.trim()||undefined,status:document.getElementById('ec_status').value};
+      await apiFetch('/contacts/'+id,{method:'PATCH',body:JSON.stringify(b)});
+      closeModal();showToast('Contacto actualizado');loadContacts();
+    });
+  }catch(e){alert('Erro: '+e.message);}
+};
+
+window.delContact=async function(id,name){
+  if(!confirm('Apagar contacto "'+name+'"? Esta ac\u00e7\u00e3o n\u00e3o pode ser desfeita.'))return;
+  try{await apiFetch('/contacts/'+id,{method:'DELETE'});showToast('Contacto apagado');loadContacts();}
+  catch(e){alert('Erro: '+e.message);}
+};
+
+// === PIPELINE ===
+window.loadPipeline=async function(){
+  const board=document.getElementById('kanbanBoard');if(!board)return;
+  try{
+    const d=await apiFetch('/opportunities');
+    const ops=d.opportunities||[];
+    const byStage={};KANBAN_STAGES.forEach(s=>{byStage[s.key]=[];});
+    ops.forEach(o=>{const k=o.stage||'prospection';if(!byStage[k])byStage[k]=[];byStage[k].push(o);});
+    board.innerHTML=KANBAN_STAGES.map(s=>`<div class="k-col">
+      <div class="k-head">
+        <span class="k-title" style="color:${s.color}">${s.label}</span>
+        <span class="k-count" style="color:${s.color};background:${s.color}22">${byStage[s.key].length}</span>
+      </div>
+      <div class="k-cards">${byStage[s.key].length
+        ?byStage[s.key].map(o=>`<div class="lx-k-card">
+            <div class="lx-k-title">${esc(o.title||o.company||'Neg\u00f3cio')}</div>
+            ${o.company&&o.title?'<div style="font-size:11px;color:var(--text3);margin-bottom:4px">'+esc(o.company)+'</div>':''}
+            <div class="lx-k-val">${fmtEur(o.value)}</div>
+            <div class="lx-k-foot">
+              <span>${o.probability||0}% prob.</span>
+              <span>
+                <a style="color:var(--info);cursor:pointer;margin-right:10px" onclick="openEditDeal('${o.id}')">Editar</a>
+                <a style="color:#ff6b6b;cursor:pointer" onclick="delDeal('${o.id}','${esc(o.title||o.company||'')}')">\u2715</a>
+              </span>
+            </div>
+          </div>`).join('')
+        :'<div style="padding:14px;font-size:12px;color:var(--text3);text-align:center">Sem neg\u00f3cios</div>'}
+      </div></div>`).join('');
+  }catch(e){board.innerHTML='<div class="lx-empty">Erro: '+esc(e.message)+'</div>';}
+};
+
+window.openNewDealModal=function(){
+  showModal('<h3>Novo Neg\u00f3cio</h3>'
+    +'<div class="lx-field"><label>T\u00edtulo</label><input id="fd_title" placeholder="Ex: Proposta Enterprise"></div>'
+    +'<div class="lx-row"><div class="lx-field"><label>Empresa</label><input id="fd_company" placeholder="Empresa Lda"></div>'
+    +'<div class="lx-field"><label>Valor (\u20ac)</label><input id="fd_value" type="number" min="0" placeholder="0"></div></div>'
+    +'<div class="lx-row"><div class="lx-field"><label>Fase</label><select id="fd_stage"><option value="prospection">Prospec\u00e7\u00e3o</option><option value="contact">Contacto</option><option value="proposal">Proposta</option><option value="negotiation">Negocia\u00e7\u00e3o</option><option value="closed">Fechado</option></select></div>'
+    +'<div class="lx-field"><label>Probabilidade (%)</label><input id="fd_prob" type="number" min="0" max="100" value="10"></div></div>'
+    +'<div class="lx-btns"><button class="lx-btn-primary" onclick="submitModal()">Criar Neg\u00f3cio</button><button class="lx-btn-cancel" onclick="closeModal()">Cancelar</button></div>',
+  async()=>{
+    const t=document.getElementById('fd_title').value.trim();
+    if(!t){alert('T\u00edtulo obrigat\u00f3rio.');return;}
+    const b={title:t,company:document.getElementById('fd_company').value.trim()||undefined,value:parseFloat(document.getElementById('fd_value').value)||0,stage:document.getElementById('fd_stage').value,probability:parseInt(document.getElementById('fd_prob').value)||10};
+    await apiFetch('/opportunities',{method:'POST',body:JSON.stringify(b)});
+    closeModal();showToast('Neg\u00f3cio criado');loadPipeline();
+  });
+};
+
+window.openEditDeal=async function(id){
+  try{
+    const d=await apiFetch('/opportunities');
+    const o=(d.opportunities||[]).find(x=>x.id===id)||{id};
+    showModal('<h3>Editar Neg\u00f3cio</h3>'
+      +'<div class="lx-field"><label>T\u00edtulo</label><input id="ed_title" value="'+esc(o.title||'')+'"></div>'
+      +'<div class="lx-row"><div class="lx-field"><label>Empresa</label><input id="ed_company" value="'+esc(o.company||'')+'"></div>'
+      +'<div class="lx-field"><label>Valor (\u20ac)</label><input id="ed_value" type="number" value="'+(o.value||0)+'"></div></div>'
+      +'<div class="lx-row"><div class="lx-field"><label>Fase</label><select id="ed_stage">'
+      +KANBAN_STAGES.map(s=>'<option value="'+s.key+'"'+(o.stage===s.key?' selected':'')+'>'+s.label.replace(/[^ ]+ /,'')+'</option>').join('')
+      +'</select></div><div class="lx-field"><label>Probabilidade (%)</label><input id="ed_prob" type="number" min="0" max="100" value="'+(o.probability||10)+'"></div></div>'
+      +'<div class="lx-btns"><button class="lx-btn-primary" onclick="submitModal()">Guardar</button><button class="lx-btn-cancel" onclick="closeModal()">Cancelar</button></div>',
+    async()=>{
+      const b={title:document.getElementById('ed_title').value.trim(),company:document.getElementById('ed_company').value.trim()||undefined,value:parseFloat(document.getElementById('ed_value').value)||0,stage:document.getElementById('ed_stage').value,probability:parseInt(document.getElementById('ed_prob').value)||10};
+      await apiFetch('/opportunities/'+id,{method:'PATCH',body:JSON.stringify(b)});
+      closeModal();showToast('Neg\u00f3cio actualizado');loadPipeline();
+    });
+  }catch(e){alert('Erro: '+e.message);}
+};
+
+window.delDeal=async function(id,name){
+  if(!confirm('Apagar neg\u00f3cio "'+name+'"?'))return;
+  try{await apiFetch('/opportunities/'+id,{method:'DELETE'});showToast('Neg\u00f3cio apagado');loadPipeline();}
+  catch(e){alert('Erro: '+e.message);}
+};
+
+// === TASKS ===
+const PRIO_COLOR={alta:'#E74C3C',media:'#F39C12',baixa:'#3498DB'};
+const STATUS_LABELS={por_fazer:'Por fazer',em_progresso:'Em progresso',concluida:'Conclu\u00edda'};
+
+window.loadTasks=async function(fStatus){
+  const el=document.getElementById('tasksList');if(!el)return;
+  try{
+    const d=await apiFetch('/tasks');
+    let ts=d.tasks||[];
+    if(fStatus)ts=ts.filter(t=>t.status===fStatus);
+    const filter='<div style="margin-bottom:12px"><select onchange="loadTasks(this.value)" style="background:var(--g750);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--text1);font-size:12.5px;outline:none;">'
+      +'<option value="">Todas as tarefas</option>'
+      +Object.entries(STATUS_LABELS).map(([k,v])=>'<option value="'+k+'"'+(fStatus===k?' selected':'')+'>'+v+'</option>').join('')
+      +'</select></div>';
+    if(!ts.length){el.innerHTML=filter+'<div class="lx-empty">Sem tarefas nesta categoria.</div>';return;}
+    el.innerHTML=filter+ts.map(t=>`<div class="lx-item">
+      <div style="width:12px;height:12px;border-radius:50%;background:${PRIO_COLOR[t.priority]||'#546070'};flex-shrink:0"></div>
+      <div class="lx-info">
+        <div class="lx-name" style="${t.status==='concluida'?'text-decoration:line-through;color:var(--text3)':''}">${esc(t.title)}</div>
+        <div class="lx-meta">${STATUS_LABELS[t.status]||t.status} \u00b7 ${t.priority||'media'} prior.${t.due_date?' \u00b7 Prazo: '+t.due_date:''}</div>
+      </div>
+      <div class="lx-actions">
+        ${t.status!=='concluida'?'<button class="lx-act" onclick="doneTask(''+t.id+'')">\u2713 Concluir</button>':''}
+        <button class="lx-act" onclick="openEditTask('${t.id}')">Editar</button>
+        <button class="lx-act del" onclick="delTask('${t.id}','${esc(t.title||'')}')">Apagar</button>
+      </div></div>`).join('');
+  }catch(e){el.innerHTML='<div class="lx-empty">Erro: '+esc(e.message)+'</div>';}
+};
+
+window.openNewTaskModal=function(){
+  showModal('<h3>Nova Tarefa</h3>'
+    +'<div class="lx-field"><label>T\u00edtulo da tarefa</label><input id="ft_title" placeholder="Descri\u00e7\u00e3o da tarefa"></div>'
+    +'<div class="lx-field"><label>Descri\u00e7\u00e3o (opcional)</label><textarea id="ft_desc" rows="2" placeholder="Detalhes..."></textarea></div>'
+    +'<div class="lx-row"><div class="lx-field"><label>Prioridade</label><select id="ft_prio"><option value="alta">Alta</option><option value="media" selected>M\u00e9dia</option><option value="baixa">Baixa</option></select></div>'
+    +'<div class="lx-field"><label>Prazo</label><input id="ft_due" type="date"></div></div>'
+    +'<div class="lx-btns"><button class="lx-btn-primary" onclick="submitModal()">Criar Tarefa</button><button class="lx-btn-cancel" onclick="closeModal()">Cancelar</button></div>',
+  async()=>{
+    const t=document.getElementById('ft_title').value.trim();
+    if(!t){alert('T\u00edtulo obrigat\u00f3rio.');return;}
+    const b={title:t,description:document.getElementById('ft_desc').value.trim()||undefined,priority:document.getElementById('ft_prio').value,status:'por_fazer',due_date:document.getElementById('ft_due').value||undefined};
+    await apiFetch('/tasks',{method:'POST',body:JSON.stringify(b)});
+    closeModal();showToast('Tarefa criada');loadTasks();
+  });
+};
+
+window.openEditTask=async function(id){
+  try{
+    const d=await apiFetch('/tasks');
+    const t=(d.tasks||[]).find(x=>x.id===id)||{id};
+    showModal('<h3>Editar Tarefa</h3>'
+      +'<div class="lx-field"><label>T\u00edtulo</label><input id="et_title" value="'+esc(t.title||'')+'"></div>'
+      +'<div class="lx-field"><label>Descri\u00e7\u00e3o</label><textarea id="et_desc" rows="2">'+esc(t.description||'')+'</textarea></div>'
+      +'<div class="lx-row"><div class="lx-field"><label>Estado</label><select id="et_status">'
+      +Object.entries(STATUS_LABELS).map(([k,v])=>'<option value="'+k+'"'+(t.status===k?' selected':'')+'>'+v+'</option>').join('')
+      +'</select></div><div class="lx-field"><label>Prioridade</label><select id="et_prio"><option value="alta"'+(t.priority==='alta'?' selected':'')+'>Alta</option><option value="media"'+(t.priority==='media'?' selected':'')+'>M\u00e9dia</option><option value="baixa"'+(t.priority==='baixa'?' selected':'')+'>Baixa</option></select></div></div>'
+      +'<div class="lx-field"><label>Prazo</label><input id="et_due" type="date" value="'+(t.due_date||'')+'"></div>'
+      +'<div class="lx-btns"><button class="lx-btn-primary" onclick="submitModal()">Guardar</button><button class="lx-btn-cancel" onclick="closeModal()">Cancelar</button></div>',
+    async()=>{
+      const b={title:document.getElementById('et_title').value.trim(),description:document.getElementById('et_desc').value.trim()||undefined,status:document.getElementById('et_status').value,priority:document.getElementById('et_prio').value,due_date:document.getElementById('et_due').value||undefined};
+      await apiFetch('/tasks/'+id,{method:'PATCH',body:JSON.stringify(b)});
+      closeModal();showToast('Tarefa actualizada');loadTasks();
+    });
+  }catch(e){alert('Erro: '+e.message);}
+};
+
+window.doneTask=async function(id){
+  try{await apiFetch('/tasks/'+id,{method:'PATCH',body:JSON.stringify({status:'concluida'})});showToast('Tarefa conclu\u00edda \u2713');loadTasks();}
+  catch(e){alert('Erro: '+e.message);}
+};
+
+window.delTask=async function(id,name){
+  if(!confirm('Apagar tarefa "'+name+'"?'))return;
+  try{await apiFetch('/tasks/'+id,{method:'DELETE'});showToast('Tarefa apagada');loadTasks();}
+  catch(e){alert('Erro: '+e.message);}
+};
+
+// === CAMPAIGNS ===
+const CAMP_STATUS={draft:'Rascunho',active:'Ativa',paused:'Pausada',finished:'Conclu\u00edda'};
+const CAMP_BADGE={draft:'bgr',active:'bg2',paused:'bo',finished:'bb'};
+
+window.loadCampaigns=async function(){
+  const el=document.getElementById('campaignsList');if(!el)return;
+  try{
+    const d=await apiFetch('/campaigns');
+    const cs=d.campaigns||[];
+    if(!cs.length){el.innerHTML='<div class="lx-empty">Sem campanhas. Clique em + Nova Campanha para criar.</div>';return;}
+    el.innerHTML=cs.map(c=>`<div class="lx-item">
+      <div class="lx-av" style="background:var(--orange)">${ini2(c.name)}</div>
+      <div class="lx-info">
+        <div class="lx-name">${esc(c.name)} <span class="badge ${CAMP_BADGE[c.status]||'bgr'}">${CAMP_STATUS[c.status]||c.status}</span></div>
+        <div class="lx-meta">${esc(c.type||'email')} \u00b7 Or\u00e7amento: ${fmtEur(c.budget)}${c.starts_at?' \u00b7 In\u00edcio: '+String(c.starts_at).slice(0,10):''}</div>
+      </div>
+      <div class="lx-actions">
+        <button class="lx-act" onclick="openEditCampaign('${c.id}')">Editar</button>
+        <button class="lx-act del" onclick="delCampaign('${c.id}','${esc(c.name||'')}')">Apagar</button>
+      </div></div>`).join('');
+  }catch(e){el.innerHTML='<div class="lx-empty">Erro: '+esc(e.message)+'</div>';}
+};
+
+window.openNewCampaignModal=function(){
+  showModal('<h3>Nova Campanha</h3>'
+    +'<div class="lx-field"><label>Nome da campanha</label><input id="fc_cname" placeholder="Ex: Newsletter Junho 2025"></div>'
+    +'<div class="lx-row"><div class="lx-field"><label>Tipo</label><select id="fc_ctype"><option value="email">Email</option><option value="whatsapp">WhatsApp</option><option value="social">Redes Sociais</option><option value="sms">SMS</option></select></div>'
+    +'<div class="lx-field"><label>Or\u00e7amento (\u20ac)</label><input id="fc_cbudget" type="number" min="0" placeholder="0"></div></div>'
+    +'<div class="lx-row"><div class="lx-field"><label>Data in\u00edcio</label><input id="fc_cstart" type="date"></div>'
+    +'<div class="lx-field"><label>Data fim</label><input id="fc_cend" type="date"></div></div>'
+    +'<div class="lx-btns"><button class="lx-btn-primary" onclick="submitModal()">Criar Campanha</button><button class="lx-btn-cancel" onclick="closeModal()">Cancelar</button></div>',
+  async()=>{
+    const n=document.getElementById('fc_cname').value.trim();
+    if(!n){alert('Nome obrigat\u00f3rio.');return;}
+    const b={name:n,type:document.getElementById('fc_ctype').value,budget:parseFloat(document.getElementById('fc_cbudget').value)||0,status:'draft',starts_at:document.getElementById('fc_cstart').value||undefined,ends_at:document.getElementById('fc_cend').value||undefined};
+    await apiFetch('/campaigns',{method:'POST',body:JSON.stringify(b)});
+    closeModal();showToast('Campanha criada');loadCampaigns();
+  });
+};
+
+window.openEditCampaign=async function(id){
+  try{
+    const d=await apiFetch('/campaigns');
+    const c=(d.campaigns||[]).find(x=>x.id===id)||{id};
+    showModal('<h3>Editar Campanha</h3>'
+      +'<div class="lx-field"><label>Nome</label><input id="ec_cname" value="'+esc(c.name||'')+'"></div>'
+      +'<div class="lx-row"><div class="lx-field"><label>Tipo</label><select id="ec_ctype">'
+      +['email','whatsapp','social','sms'].map(t=>'<option value="'+t+'"'+(c.type===t?' selected':'')+'>'+t.charAt(0).toUpperCase()+t.slice(1)+'</option>').join('')
+      +'</select></div><div class="lx-field"><label>Estado</label><select id="ec_cstatus">'
+      +Object.entries(CAMP_STATUS).map(([k,v])=>'<option value="'+k+'"'+(c.status===k?' selected':'')+'>'+v+'</option>').join('')
+      +'</select></div></div>'
+      +'<div class="lx-field"><label>Or\u00e7amento (\u20ac)</label><input id="ec_cbudget" type="number" value="'+(c.budget||0)+'"></div>'
+      +'<div class="lx-btns"><button class="lx-btn-primary" onclick="submitModal()">Guardar</button><button class="lx-btn-cancel" onclick="closeModal()">Cancelar</button></div>',
+    async()=>{
+      const b={name:document.getElementById('ec_cname').value.trim(),type:document.getElementById('ec_ctype').value,status:document.getElementById('ec_cstatus').value,budget:parseFloat(document.getElementById('ec_cbudget').value)||0};
+      await apiFetch('/campaigns/'+id,{method:'PATCH',body:JSON.stringify(b)});
+      closeModal();showToast('Campanha actualizada');loadCampaigns();
+    });
+  }catch(e){alert('Erro: '+e.message);}
+};
+
+window.delCampaign=async function(id,name){
+  if(!confirm('Apagar campanha "'+name+'"?'))return;
+  try{await apiFetch('/campaigns/'+id,{method:'DELETE'});showToast('Campanha apagada');loadCampaigns();}
+  catch(e){alert('Erro: '+e.message);}
+};
+
+// === OVERRIDE go() ===
+(function(){
+  const _orig=window.go;
+  window.go=function(id,el){
+    _orig(id,el);
+    const loaders={crm:()=>loadContacts(),pipeline:()=>loadPipeline(),tasks:()=>loadTasks(),campaigns:()=>loadCampaigns()};
+    if(loaders[id])setTimeout(loaders[id],120);
+  };
+})();
+
+// === CRM SEARCH ===
+document.addEventListener('DOMContentLoaded',function(){
+  const s=document.getElementById('crmSearch');
+  if(s){let t;s.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(()=>loadContacts(s.value),420);});}
+});
+
+// === CLEAR DEMO USERS ON REAL LOGIN ===
+(function(){
+  const _orig=window.bootAuth;
+  window.bootAuth=async function(){
+    await _orig();
+    const tk=localStorage.getItem('lxgest_api_token_v1');
+    if(tk&&tk!=='demo-mode'){
+      localStorage.removeItem('lxgest_users_v1');
+      if(window.refreshUsersFromApi)await refreshUsersFromApi().catch(()=>{});
+    }
+  };
+})();
 </script>
 
 </body>

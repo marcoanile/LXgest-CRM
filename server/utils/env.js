@@ -15,7 +15,7 @@ function requireEnv(names) {
 
 function integrationStatus() {
   return {
-    openai: !missingEnv('OPENAI_API_KEY'),
+    claude: !missingEnv('ANTHROPIC_API_KEY'),
     whatsapp: !missingEnv('WHATSAPP_TOKEN') && !missingEnv('WHATSAPP_PHONE_NUMBER_ID'),
     resend: !missingEnv('RESEND_API_KEY'),
     googlePlaces: !missingEnv('GOOGLE_PLACES_API_KEY'),

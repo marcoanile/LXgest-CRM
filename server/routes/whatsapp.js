@@ -1,5 +1,5 @@
 const express = require('express');
-const OpenAI = require('openai');
+const Anthropic = require('@anthropic-ai/sdk');
 const { pool } = require('../db/pool');
 const { requireAuth } = require('../middleware/auth');
 const { requireEnv, missingEnv } = require('../utils/env');
@@ -19,16 +19,15 @@ async function sendWhatsAppText(to, body) {
 }
 
 async function aiReply(message) {
-  if (missingEnv('OPENAI_API_KEY')) return null;
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const completion = await client.chat.completions.create({
-    model: process.env.OPENAI_MODEL || 'gpt-4.1-mini',
-    messages: [
-      { role: 'system', content: 'És o assistente comercial da LXGest em Portugal. Responde de forma curta, profissional e comercial.' },
-      { role: 'user', content: message }
-    ]
+  if (missingEnv('ANTHROPIC_API_KEY')) return null;
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const response = await client.messages.create({
+    model: process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001',
+    max_tokens: 300,
+    system: 'És o assistente comercial da LXGest em Portugal. Responde de forma curta, profissional e comercial.',
+    messages: [{ role: 'user', content: message }]
   });
-  return completion.choices?.[0]?.message?.content || null;
+  return response.content?.[0]?.text || null;
 }
 
 router.post('/send', requireAuth, async (req, res, next) => {

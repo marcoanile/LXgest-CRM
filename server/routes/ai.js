@@ -1,5 +1,5 @@
 const express = require('express');
-const OpenAI = require('openai');
+const Anthropic = require('@anthropic-ai/sdk');
 const { requireAuth } = require('../middleware/auth');
 const { audit } = require('../utils/audit');
 
@@ -7,12 +7,12 @@ const router = express.Router();
 router.use(requireAuth);
 
 function getClient() {
-  if (!process.env.OPENAI_API_KEY) {
-    const err = new Error('OPENAI_API_KEY não configurada no Render.');
+  if (!process.env.ANTHROPIC_API_KEY) {
+    const err = new Error('ANTHROPIC_API_KEY não configurada no Render. Adicione a chave Anthropic nas variáveis de ambiente.');
     err.status = 503;
     throw err;
   }
-  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 }
 
 const SYSTEM_PROMPTS = {
@@ -23,11 +23,12 @@ const SYSTEM_PROMPTS = {
   automation: `És arquiteto de automações CRM. Cria workflows claros com trigger, condição, ação, canal, responsável, atraso e métrica de sucesso.`
 };
 
-function normaliseMessages(messages = []) {
-  return messages
+function buildMessages(messages = [], message) {
+  const history = messages
     .filter(m => m && ['user', 'assistant'].includes(m.role) && typeof m.content === 'string')
     .slice(-12)
     .map(m => ({ role: m.role, content: m.content.slice(0, 5000) }));
+  return [...history, { role: 'user', content: message.slice(0, 8000) }];
 }
 
 router.post('/chat', async (req, res) => {
@@ -36,24 +37,18 @@ router.post('/chat', async (req, res) => {
     if (!message || typeof message !== 'string') return res.status(400).json({ error: 'Mensagem em falta.' });
 
     const client = getClient();
-    const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
+    const model = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
     const system = SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.assistant;
+    const fullSystem = system + `\n\nContexto: ${JSON.stringify({ user: req.user, context }).slice(0, 2000)}`;
 
-    const chatMessages = [
-      { role: 'system', content: system },
-      { role: 'system', content: `Contexto de utilizador: ${JSON.stringify({ user: req.user, context }).slice(0, 4000)}` },
-      ...normaliseMessages(messages),
-      { role: 'user', content: message.slice(0, 8000) }
-    ];
-
-    const response = await client.chat.completions.create({
+    const response = await client.messages.create({
       model,
-      messages: chatMessages,
-      temperature: 0.4,
-      max_tokens: 1200
+      max_tokens: 1200,
+      system: fullSystem,
+      messages: buildMessages(messages, message)
     });
 
-    const text = response.choices?.[0]?.message?.content || 'Não consegui gerar resposta neste momento.';
+    const text = response.content?.[0]?.text || 'Não consegui gerar resposta neste momento.';
     await audit(req.user.id, 'ai_chat', 'ai', null, { mode, model });
     res.json({ answer: text, model, mode });
   } catch (err) {
@@ -67,14 +62,17 @@ router.post('/generate', async (req, res) => {
     const { type = 'email', prompt, audience, goal, tone = 'profissional' } = req.body;
     if (!prompt) return res.status(400).json({ error: 'Prompt em falta.' });
     const client = getClient();
-    const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
+    const model = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
     const system = SYSTEM_PROMPTS[type] || SYSTEM_PROMPTS.assistant;
-    const chatMessages = [
-      { role: 'system', content: system },
-      { role: 'user', content: `Tipo: ${type}\nPúblico: ${audience || 'B2B Portugal'}\nObjetivo: ${goal || 'conversão comercial'}\nTom: ${tone}\nPedido: ${prompt}` }
-    ];
-    const response = await client.chat.completions.create({ model, messages: chatMessages, temperature: 0.5, max_tokens: 1400 });
-    const content = response.choices?.[0]?.message?.content || '';
+    const userMsg = `Tipo: ${type}\nPúblico: ${audience || 'B2B Portugal'}\nObjetivo: ${goal || 'conversão comercial'}\nTom: ${tone}\nPedido: ${prompt}`;
+
+    const response = await client.messages.create({
+      model,
+      max_tokens: 1400,
+      system,
+      messages: [{ role: 'user', content: userMsg }]
+    });
+    const content = response.content?.[0]?.text || '';
     await audit(req.user.id, 'ai_generate', 'ai', null, { type, model });
     res.json({ content, model, type });
   } catch (err) {
