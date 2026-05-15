@@ -20,7 +20,7 @@ services:
       - key: MASTER_NAME
         value: Marco Anile
       - key: CLEAN_DATABASE_ON_DEPLOY
-        value: "true"
+        value: "false"
       - key: JWT_SECRET
         generateValue: true
       - key: ANTHROPIC_API_KEY
