@@ -20,7 +20,7 @@ services:
       - key: MASTER_NAME
         value: Marco Anile
       - key: CLEAN_DATABASE_ON_DEPLOY
-        value: "true"
+        value: "false"
       - key: JWT_SECRET
         generateValue: true
       - key: ANTHROPIC_API_KEY
@@ -59,8 +59,8 @@ services:
         sync: false
       - key: DATABASE_URL
         fromDatabase:
-          name: lxgest-db
+          name: lxgestcrm-db
           property: connectionString
 databases:
-  - name: lxgest-db
-    plan: basic-256mb
+  - name: lxgestcrm-db
+    plan: free
