@@ -1494,8 +1494,8 @@ window.LXGEST_WHATSAPP_CONFIG = {
 <script>
 
 // ═══ LOGIN & USER MANAGEMENT ═══
-const MASTER_EMAIL = 'marco.anile@lxgest.com';
-const MASTER_PASSWORD = 'Mec090716';
+const MASTER_EMAIL = '';
+const MASTER_PASSWORD = '';
 const USERS_KEY = 'lxgest_users_v1';
 const SESSION_KEY = 'lxgest_current_user_v1';
 
@@ -1765,9 +1765,6 @@ document.addEventListener('keydown',e=>{
 });
 
 // ═══ INIT ═══
-window.addEventListener('DOMContentLoaded',()=>{
-  bootAuth();
-});
 
 // Re-animate when switching tabs
 document.querySelectorAll('.nav-item').forEach(item=>{
@@ -1802,8 +1799,8 @@ window.loginUser = async function(e) {
   const password = document.getElementById('loginPassword').value;
   const err = document.getElementById('loginError');
 
-  const MASTER_EMAIL = 'marco.anile@lxgest.com';
-  const MASTER_PASSWORD = 'Mec090716';
+  const MASTER_EMAIL = '';
+  const MASTER_PASSWORD = '';
 
   function enterPrototypeMode(message) {
     const demoUser = {

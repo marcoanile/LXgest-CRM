@@ -19,6 +19,8 @@ services:
         value: Mec090716
       - key: MASTER_NAME
         value: Marco Anile
+      - key: CLEAN_DATABASE_ON_DEPLOY
+        value: "true"
       - key: JWT_SECRET
         generateValue: true
       - key: OPENAI_API_KEY
@@ -40,7 +42,7 @@ services:
       - key: WHATSAPP_DISPLAY_NUMBER
         value: "+351 913135420"
       - key: WHATSAPP_BOT_ENABLED
-        value: "true"
+        value: "false"
       - key: APOLLO_API_KEY
         sync: false
       - key: GOOGLE_PLACES_API_KEY

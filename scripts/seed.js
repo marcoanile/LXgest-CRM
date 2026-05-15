@@ -18,8 +18,8 @@ async function cleanBusinessData() {
     await pool.query(`DELETE FROM ${table}`);
   }
 
-  await pool.query("DELETE FROM users WHERE lower(email) <> lower($1)", [process.env.MASTER_EMAIL]);
-  console.log('Business data cleaned.');
+  await pool.query('DELETE FROM users WHERE lower(email) <> lower($1)', [process.env.MASTER_EMAIL]);
+  console.log('Business data cleaned. Only master user remains.');
 }
 
 async function ensureMasterUser() {
@@ -34,12 +34,12 @@ async function ensureMasterUser() {
 
   await pool.query(
     `insert into users (name, email, password_hash, role, active, is_master)
-     values ($1, $2, $3, 'Admin', true, true)
+     values ($1, $2, $3, 'Administrador Master', true, true)
      on conflict (email)
      do update set
        name = excluded.name,
        password_hash = excluded.password_hash,
-       role = 'Admin',
+       role = 'Administrador Master',
        active = true,
        is_master = true,
        updated_at = now()`,

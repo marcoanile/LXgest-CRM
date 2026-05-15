@@ -9,7 +9,7 @@ router.use(requireAuth);
 function getClient() {
   if (!process.env.OPENAI_API_KEY) {
     const err = new Error('OPENAI_API_KEY não configurada no Render.');
-    err.statusCode = 503;
+    err.status = 503;
     throw err;
   }
   return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -38,26 +38,27 @@ router.post('/chat', async (req, res) => {
     const client = getClient();
     const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
     const system = SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.assistant;
-    const input = [
+
+    const chatMessages = [
       { role: 'system', content: system },
       { role: 'system', content: `Contexto de utilizador: ${JSON.stringify({ user: req.user, context }).slice(0, 4000)}` },
       ...normaliseMessages(messages),
       { role: 'user', content: message.slice(0, 8000) }
     ];
 
-    const response = await client.responses.create({
+    const response = await client.chat.completions.create({
       model,
-      input,
+      messages: chatMessages,
       temperature: 0.4,
-      max_output_tokens: 1200
+      max_tokens: 1200
     });
 
-    const text = response.output_text || 'Não consegui gerar resposta neste momento.';
+    const text = response.choices?.[0]?.message?.content || 'Não consegui gerar resposta neste momento.';
     await audit(req.user.id, 'ai_chat', 'ai', null, { mode, model });
     res.json({ answer: text, model, mode });
   } catch (err) {
     console.error('AI error', err);
-    res.status(err.statusCode || 500).json({ error: err.message || 'Erro no módulo IA.' });
+    res.status(err.status || 500).json({ error: err.message || 'Erro no módulo IA.' });
   }
 });
 
@@ -68,16 +69,17 @@ router.post('/generate', async (req, res) => {
     const client = getClient();
     const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
     const system = SYSTEM_PROMPTS[type] || SYSTEM_PROMPTS.assistant;
-    const input = [
+    const chatMessages = [
       { role: 'system', content: system },
       { role: 'user', content: `Tipo: ${type}\nPúblico: ${audience || 'B2B Portugal'}\nObjetivo: ${goal || 'conversão comercial'}\nTom: ${tone}\nPedido: ${prompt}` }
     ];
-    const response = await client.responses.create({ model, input, temperature: 0.5, max_output_tokens: 1400 });
+    const response = await client.chat.completions.create({ model, messages: chatMessages, temperature: 0.5, max_tokens: 1400 });
+    const content = response.choices?.[0]?.message?.content || '';
     await audit(req.user.id, 'ai_generate', 'ai', null, { type, model });
-    res.json({ content: response.output_text, model, type });
+    res.json({ content, model, type });
   } catch (err) {
     console.error('AI generate error', err);
-    res.status(err.statusCode || 500).json({ error: err.message || 'Erro ao gerar conteúdo.' });
+    res.status(err.status || 500).json({ error: err.message || 'Erro ao gerar conteúdo.' });
   }
 });
 

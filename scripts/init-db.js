@@ -33,7 +33,6 @@ async function main() {
     );
     create index if not exists idx_contacts_email on contacts(lower(email));
     create index if not exists idx_contacts_company on contacts(company);
-
     create table if not exists opportunities (
       id uuid primary key default gen_random_uuid(),
       title text not null,
@@ -96,7 +95,6 @@ async function main() {
       provider_payload jsonb default '{}',
       created_at timestamptz not null default now()
     );
-
     create table if not exists lead_searches (
       id uuid primary key default gen_random_uuid(),
       user_id uuid references users(id) on delete set null,
@@ -107,7 +105,6 @@ async function main() {
       results jsonb default '[]',
       created_at timestamptz not null default now()
     );
-
     create table if not exists audit_logs (
       id uuid primary key default gen_random_uuid(),
       user_id uuid references users(id) on delete set null,
@@ -118,7 +115,14 @@ async function main() {
       created_at timestamptz not null default now()
     );
   `);
+
+  // Unique partial index to prevent duplicate contacts by email (ignores nulls)
+  await pool.query(`
+    create unique index if not exists idx_contacts_email_unique
+    on contacts(lower(email)) where email is not null
+  `);
+
   console.log('Database schema is ready.');
 }
 
-main().then(()=>pool.end()).catch(err => { console.error(err); process.exit(1); });
+main().then(() => pool.end()).catch(err => { console.error(err); process.exit(1); });
